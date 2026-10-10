@@ -39,3 +39,6 @@ node_modules/
 
 # Private migration bundles include the database and runtime credentials.
 /.migration/
+
+# Machine-specific server restart policy; provisioned during migration.
+/docker-compose.override.yml
