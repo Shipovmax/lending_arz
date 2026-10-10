@@ -18,6 +18,9 @@ preview_css = """
 .topbar__links a, .megamenu__col a, .footer__col a, .footer__legal a,
 .breadcrumbs a, .link-u, .link-line { min-height: var(--tap); }
 .qty button, .size, .cart-item__remove { min-width: var(--tap); }
+.breadcrumbs a, .link-u, .link-line { display: inline-flex; align-items: center; min-height: var(--tap); min-width: var(--tap); }
+.sort .select { min-height: var(--tap); }
+.qty input { min-width: var(--tap); }
 """
 (out / "assets/css/preview.css").write_text(preview_css)
 for page in out.glob("*.html"):

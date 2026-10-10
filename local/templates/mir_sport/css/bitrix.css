@@ -63,3 +63,8 @@ main:focus { outline: none; }
 
 .more-btn, .chip, .gallery__thumb, .gallery__nav { min-height: var(--tap); }
 .gallery__thumb, .gallery__nav { min-width: var(--tap); }
+
+/* Inline links need a real box for min-height to affect their hit area. */
+.breadcrumbs a, .link-u, .link-line { display: inline-flex; align-items: center; min-height: var(--tap); min-width: var(--tap); }
+.sort .select { min-height: var(--tap); }
+.qty input { width: var(--tap); min-width: var(--tap); }

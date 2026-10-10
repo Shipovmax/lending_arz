@@ -168,3 +168,8 @@
 #bx-soa-delivery .bx-soa-section-content img,
 #bx-soa-paysystem .bx-soa-section-content img { width: 96px; height: 56px !important; object-fit: contain; }
 .bx-soa-cart-total h2 { font-size: var(--fs-20); font-weight: 600; }
+
+.bx-soa-wrapper .main-user-consent-request:focus-within { outline: 2px solid var(--c-ink); outline-offset: 3px; }
+
+.bx-soa-item-title a { display: inline-flex; align-items: center; min-height: var(--tap); }
+.bx-soa-wrapper .main-user-consent-request a { display: inline-flex; align-items: center; min-height: var(--tap); }

@@ -31,7 +31,7 @@ try {
     // Fail closed if a future change accidentally submits the checkout form.
     await page.route('**/*', async route => {
       const body = route.request().postData() || '';
-      if (/soa-action(?:=|%3D)saveOrderAjax/.test(body)) {
+      if (/(?:soa-action|action)(?:=|%3D)saveOrderAjax/.test(body)) {
         report.errors.push('Blocked unexpected order submission');
         await route.abort();
       } else {
