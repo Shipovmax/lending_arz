@@ -36,3 +36,6 @@ node_modules/
 /dist/
 /playwright-report/
 /test-results/
+
+# Private migration bundles include the database and runtime credentials.
+/.migration/
