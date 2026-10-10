@@ -1,0 +1,38 @@
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Bitrix cache and generated
+/bitrix/cache/
+/bitrix/managed_cache/
+/bitrix/stack_cache/
+/bitrix/backup/
+/bitrix/tmp/
+/bitrix/html_pages/
+/bitrix/.settings.php
+/bitrix/.settings_extra.php
+/bitrix/php_interface/dbconn.php
+/local/php_interface/dbconn.php
+/local/.settings.php
+/local/.settings_extra.php
+
+# Uploads
+/upload/
+
+# OS / editor / deps
+.DS_Store
+.idea/
+.vscode/
+node_modules/
+*.log
+
+# Bitrix core and runtime live in Docker volumes; if a core is ever unpacked here, never commit it
+/bitrix/
+
+# Static preview output and browser reports
+/dist/
+/playwright-report/
+/test-results/

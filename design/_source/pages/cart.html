@@ -1,0 +1,95 @@
+<!-- meta: Корзина и оформление заказа — Мир спорта | Оформление заказа без регистрации: самовывоз в Арзамасе или доставка СДЭК. | none -->
+<!-- Bitrix: sale.basket.basket + sale.order.ajax (one-page checkout, guest order). Delivery: СДЭК module + pickup; payment: online acquiring + cash on delivery. -->
+<div class="container page page--tight" data-checkout>
+  <section class="success" hidden data-success>
+    <span class="ok caps">Заказ оформлен</span>
+    <h1 class="page-title">Спасибо, <span data-success-name></span></h1>
+    <p class="muted">Номер заказа: [номер из 1С]. Мы позвоним на <span data-success-phone></span>, чтобы подтвердить заказ и доставку.</p>
+    <a class="btn btn--primary" href="catalog.html">Продолжить покупки</a>
+  </section>
+
+  <div data-checkout-form-wrap>
+    <h1 class="page-title">Корзина и оформление</h1>
+    <div class="checkout" style="margin-top: 24px">
+      <form class="checkout__main" novalidate data-checkout-form>
+        <section aria-label="Товары">
+          <div class="cart-list" data-cart-list>
+            <div class="cart-item" data-item data-price="4290">
+              <span class="cart-item__photo photo">Фото</span>
+              <div class="cart-item__info">
+                <a class="cart-item__name link-u" href="product.html">Кроссовки беговые мужские</a>
+                <span class="muted small">Чёрный · размер 42</span>
+                <span class="muted small">4 290 ₽ за шт.</span>
+              </div>
+              <div class="qty"><button type="button" aria-label="Меньше" data-qty="-1">−</button><output data-qty-value>1</output><button type="button" aria-label="Больше" data-qty="1">+</button></div>
+              <span class="cart-item__total" data-item-total>4 290 ₽</span>
+              <button class="icon-btn" type="button" aria-label="Удалить товар" data-remove><svg class="icon"><use href="#i-trash"/></svg></button>
+            </div>
+            <div class="cart-item" data-item data-price="3190">
+              <span class="cart-item__photo photo">Фото</span>
+              <div class="cart-item__info">
+                <a class="cart-item__name link-u" href="product.html">Спиннинг 2,4 м, тест 5–20 г</a>
+                <span class="muted small">Длина 2,4 м</span>
+                <span class="muted small">3 190 ₽ за шт.</span>
+              </div>
+              <div class="qty"><button type="button" aria-label="Меньше" data-qty="-1">−</button><output data-qty-value>1</output><button type="button" aria-label="Больше" data-qty="1">+</button></div>
+              <span class="cart-item__total" data-item-total>3 190 ₽</span>
+              <button class="icon-btn" type="button" aria-label="Удалить товар" data-remove><svg class="icon"><use href="#i-trash"/></svg></button>
+            </div>
+          </div>
+          <div class="empty" hidden data-cart-empty>
+            <span class="empty__title">Корзина пуста</span>
+            <a class="btn btn--primary" href="catalog.html">Перейти в каталог</a>
+          </div>
+        </section>
+
+        <section class="step">
+          <h2 class="step__title">1. Контакты</h2>
+          <div class="fields">
+            <label class="field" data-field="name">Имя
+              <input type="text" name="name" autocomplete="name" required>
+              <span class="err" hidden>Введите имя</span>
+            </label>
+            <label class="field" data-field="phone">Телефон
+              <input type="tel" name="phone" autocomplete="tel" placeholder="+7 900 000-00-00" required>
+              <span class="err" hidden>Введите телефон, чтобы мы подтвердили заказ</span>
+            </label>
+            <label class="field">Email, если нужен чек на почту
+              <input type="email" name="email" autocomplete="email">
+            </label>
+          </div>
+        </section>
+
+        <section class="step">
+          <h2 class="step__title">2. Доставка</h2>
+          <div class="choices" role="radiogroup" aria-label="Способ доставки" data-choices="delivery">
+            <button class="choice" type="button" role="radio" aria-checked="true" data-value="pvz" data-cost="Рассчитаем по адресу" data-address="Город и адрес пункта СДЭК" data-label="Пункт выдачи"><span class="choice__title">Пункт выдачи СДЭК</span><span class="choice__hint">По всей России, срок при выборе пункта</span></button>
+            <button class="choice" type="button" role="radio" aria-checked="false" data-value="courier" data-cost="Рассчитаем по адресу" data-address="Город, улица, дом, квартира" data-label="Адрес доставки"><span class="choice__title">Курьер СДЭК</span><span class="choice__hint">До двери, срок при выборе адреса</span></button>
+            <button class="choice" type="button" role="radio" aria-checked="false" data-value="pickup" data-cost="Бесплатно" data-address="" data-label=""><span class="choice__title">Самовывоз из магазина</span><span class="choice__hint">Арзамас, [адрес магазина]</span></button>
+          </div>
+          <label class="field" data-address-field><span data-address-label>Пункт выдачи</span>
+            <input type="text" name="address" placeholder="Город и адрес пункта СДЭК" data-address-input>
+          </label>
+        </section>
+
+        <section class="step">
+          <h2 class="step__title">3. Оплата</h2>
+          <div class="choices" role="radiogroup" aria-label="Способ оплаты" data-choices="payment">
+            <button class="choice" type="button" role="radio" aria-checked="true" data-value="online"><span class="choice__title">Онлайн на сайте</span><span class="choice__hint">Картой или через СБП</span></button>
+            <button class="choice" type="button" role="radio" aria-checked="false" data-value="cod"><span class="choice__title">При получении</span><span class="choice__hint">В пункте СДЭК или в магазине</span></button>
+          </div>
+        </section>
+      </form>
+
+      <aside class="summary" aria-label="Итог заказа">
+        <h2 style="font-size: var(--fs-20)">Ваш заказ</h2>
+        <div class="summary__row"><span class="muted">Товары, <span data-sum-count>2</span> шт.</span><span data-sum-total>7 480 ₽</span></div>
+        <div class="summary__row"><span class="muted">Доставка</span><span data-delivery-cost>Рассчитаем по адресу</span></div>
+        <div class="summary__total"><span>Итого</span><strong data-grand-total>7 480 ₽</strong></div>
+        <button class="btn btn--accent btn--block" type="button" style="min-height: 54px" data-submit>Оформить заказ</button>
+        <label class="consent"><input type="checkbox" data-consent><span>Согласен на обработку персональных данных по <a class="link-line" href="policy.html">политике конфиденциальности</a> и с условиями <a class="link-line" href="info.html#requisites">публичной оферты</a></span></label>
+        <span class="err" role="alert" hidden data-consent-error>Подтвердите согласие, чтобы оформить заказ</span>
+      </aside>
+    </div>
+  </div>
+</div>

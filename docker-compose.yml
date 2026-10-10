@@ -1,0 +1,53 @@
+# Local 1C-Bitrix environment. Core lives in the bitrix_www volume; /local and the public pages in site/ are in git.
+x-site-mounts: &site-mounts
+  - bitrix_www:/var/www/html
+  - ./local:/var/www/html/local
+  # Public pages we own; they overlay the wizard's demo pages in the volume.
+  - ./site/index.php:/var/www/html/index.php
+  - ./site/404.php:/var/www/html/404.php
+  - ./site/catalog:/var/www/html/catalog
+  - ./site/personal/cart:/var/www/html/personal/cart
+  - ./site/personal/order/make:/var/www/html/personal/order/make
+  - ./site/personal/order/payment:/var/www/html/personal/order/payment
+  - ./site/search:/var/www/html/search
+  - ./site/info:/var/www/html/info
+  - ./site/policy:/var/www/html/policy
+  - ./site/favorites:/var/www/html/favorites
+  # Used by nginx only; harmless in the php container.
+  - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+
+services:
+  nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - "${HTTP_PORT:-8080}:80"
+    volumes: *site-mounts
+    depends_on:
+      - php
+
+  php:
+    build: ./docker/php
+    volumes: *site-mounts
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - bitrix_db:/var/lib/mysql
+      - ./docker/mysql/bitrix.cnf:/etc/mysql/conf.d/bitrix.cnf:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${DB_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  bitrix_www:
+  bitrix_db:

@@ -1,0 +1,20 @@
+<!-- meta: Избранное — Мир спорта | Сохранённые товары. | none -->
+<!-- Bitrix: favorites kept in localStorage for guests (no account on the site). The page renders them via the catalog API or a small custom component. -->
+<div class="container page page--tight">
+  <nav aria-label="Хлебные крошки">
+    <ol class="breadcrumbs"><li><a class="link-u" href="index.html">Главная</a></li><li aria-current="page">Избранное</li></ol>
+  </nav>
+  <div class="catalog-head">
+    <h1 class="page-title">Избранное</h1>
+    <span class="muted small" data-fav-page-count></span>
+  </div>
+  <div class="product-grid" data-fav-grid>
+<!--CARDS:favorites-->
+  </div>
+  <section class="empty" hidden data-fav-empty>
+    <svg class="icon" style="width: 40px; height: 40px"><use href="#i-heart"/></svg>
+    <h2 class="empty__title">В избранном пока пусто</h2>
+    <p class="muted">Нажмите на сердечко у товара, чтобы сохранить его и вернуться к нему позже.</p>
+    <a class="btn btn--primary" href="catalog.html">Перейти в каталог</a>
+  </section>
+</div>

@@ -1,0 +1,70 @@
+/* Design tokens. Every color, size and font in the theme comes from here. */
+:root {
+  /* Colors */
+  --c-ink: #111111;
+  --c-text: #2e2c29;
+  --c-muted: #5e5b55;
+  --c-subtle: #77736c;
+  --c-disabled: #9a968f;
+  --c-line: #e7e5e0;
+  --c-line-strong: #cfccc5;
+  --c-line-soft: #dddad3;
+  --c-bg: #ffffff;
+  --c-surface: #f5f4f1;
+  --c-photo: #f0efeb;
+  --c-photo-alt: #e9e7e2;
+  --c-accent: #b2361a;
+  --c-success: #1f6b45;
+  --c-danger: #b42318;
+  --c-on-dark: #ffffff;
+  --c-on-dark-muted: #bdb9b1;
+  --c-on-dark-subtle: #a39f97;
+  --c-dark-line: #2e2c29;
+  --c-dark-border: #3a3835;
+
+  /* Typography */
+  --font: "Onest", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --fs-11: 0.6875rem;
+  --fs-12: 0.75rem;
+  --fs-13: 0.8125rem;
+  --fs-14: 0.875rem;
+  --fs-15: 0.9375rem;
+  --fs-16: 1rem;
+  --fs-17: 1.0625rem;
+  --fs-20: 1.25rem;
+  --fs-22: 1.375rem;
+  --fs-28: 1.75rem;
+  --fs-36: 2.25rem;
+  --fs-40: 2.5rem;
+  --fs-64: 4rem;
+  --tracking-caps: 0.12em;
+  --tracking-logo: 0.2em;
+
+  /* Spacing and layout */
+  --container: 1360px;
+  --gutter: 32px;
+  --section-gap: 88px;
+  --control-h: 48px;
+  --control-h-sm: 40px;
+  --tap: 44px;
+
+  /* Elevation (only for overlays) */
+  --shadow-overlay: 0 20px 44px rgba(17, 17, 17, 0.12);
+
+  /* Motion */
+  --t-fast: 0.1s ease;
+  --t: 0.2s ease;
+
+  /* Layers */
+  --z-header: 30;
+  --z-overlay: 40;
+  --z-cookie: 50;
+  --z-skip: 100;
+}
+
+@media (max-width: 767px) {
+  :root {
+    --gutter: 16px;
+    --section-gap: 44px;
+  }
+}

@@ -1,0 +1,170 @@
+/*
+ * sale.order.ajax / mir: the checkout in the prototype's look (cart.html: .step, .field, .choice, .summary).
+ * order_ajax.js builds its own markup (bx-soa-* and a few Bootstrap classes); the template does not load
+ * Bootstrap, so the needed parts are styled here. Only tokens from tokens.css; everything is scoped to the form.
+ */
+
+/* Layout: main column + sidebar (.checkout comes from main.css) */
+.bx-soa-wrapper .checkout { align-items: flex-start; }
+.bx-soa { counter-reset: soa-step; }
+.bx-soa-sidebar { flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+.bx-soa-cart-total-ghost { display: none; }
+
+/* Bootstrap subset used by the script */
+.bx-soa-wrapper .row { display: flex; flex-wrap: wrap; gap: 16px; }
+.bx-soa-wrapper .col,
+.bx-soa-wrapper [class*="col-"] { flex: 1 1 240px; min-width: 0; }
+.bx-soa-wrapper .col-12, .bx-soa-wrapper .col-sm-12 { flex-basis: 100%; }
+.bx-soa-wrapper .d-none { display: none !important; }
+.bx-soa-wrapper .d-block { display: block !important; }
+.bx-soa-wrapper .d-flex { display: flex !important; }
+@media (min-width: 576px) {
+  .bx-soa-wrapper .d-sm-none { display: none !important; }
+  .bx-soa-wrapper .d-sm-block { display: block !important; }
+  .bx-soa-wrapper .d-sm-inline-block { display: inline-block !important; }
+}
+@media (min-width: 768px) {
+  .bx-soa-wrapper .d-md-block { display: block !important; }
+  .bx-soa-wrapper .d-md-none { display: none !important; }
+}
+@media (min-width: 992px) {
+  .bx-soa-wrapper .d-lg-none { display: none !important; }
+  .bx-soa-wrapper .d-lg-block { display: block !important; }
+}
+.bx-soa-wrapper .container-fluid { padding: 0; }
+
+/* Buttons: .btn comes from main.css */
+.bx-soa-wrapper .btn-primary { background: var(--c-ink); border-color: var(--c-ink); color: var(--c-on-dark); }
+.bx-soa-wrapper .btn-outline-secondary { background: var(--c-bg); }
+.bx-soa-wrapper .pull-right { margin-left: auto; }
+.bx-soa-more-btn { display: flex; flex-wrap: wrap; gap: 12px; }
+.bx-soa-more { margin-top: 8px; }
+
+/* Messages */
+.bx-soa-wrapper .alert { padding: 14px 16px; background: var(--c-surface); font-size: var(--fs-14); }
+.bx-soa-wrapper .alert-danger { color: var(--c-danger); }
+.bx-soa-wrapper .alert-warning { color: var(--c-text); }
+.bx-soa-wrapper .close { float: right; border: none; background: transparent; font-size: var(--fs-20); cursor: pointer; }
+
+/* Steps (.step / .step__title) */
+.bx-soa-section { display: flex; flex-direction: column; gap: 16px; }
+.bx-soa-section-title-container { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.bx-soa-section-title { font-size: var(--fs-22); font-weight: 500; letter-spacing: -0.01em; }
+.bx-soa-section-title-count::before { counter-increment: soa-step; content: counter(soa-step) ". "; }
+.bx-soa-editstep { font-size: var(--fs-13); text-decoration: underline; text-underline-offset: 3px; }
+.bx-soa-section-content { display: flex; flex-direction: column; gap: 16px; }
+.bx-soa-section.bx-step-error .bx-soa-section-title { color: var(--c-danger); }
+
+/* Fields (.field) */
+.bx-soa-wrapper .form-group { display: flex; flex-direction: column; gap: 6px; font-size: var(--fs-14); font-weight: 500; }
+.bx-soa-custom-label, .bx-soa-wrapper label { font-size: var(--fs-14); font-weight: 500; }
+.bx-soa-wrapper .form-control,
+.bx-soa-wrapper input[type="text"],
+.bx-soa-wrapper input[type="tel"],
+.bx-soa-wrapper input[type="email"] { width: 100%; min-height: var(--control-h); padding: 0 14px; border: 1px solid var(--c-line-strong); border-radius: 0; background: var(--c-bg); font-size: var(--fs-16); }
+.bx-soa-wrapper textarea.form-control { min-height: 96px; padding: 12px 14px; }
+.bx-soa-wrapper .has-error .form-control, .bx-soa-wrapper .form-control.is-invalid { border-color: var(--c-danger); }
+.bx-authform-starrequired { color: var(--c-danger); }
+.bx-soa-reference, .bx-soa-tooltip, .bx-soa-wrapper .form-text { font-size: var(--fs-13); color: var(--c-muted); font-weight: 400; }
+.bx-soa-customer-field { margin: 0; }
+#bx-soa-properties .bx-soa-section-content > .row { display: flex; flex-wrap: wrap; gap: 16px; }
+#bx-soa-properties .form-group { flex: 1 1 240px; }
+
+/* Location widget sits in a .form-control */
+.bx-sls .dropdown-block.form-control { display: flex; align-items: center; padding: 0 14px; }
+.bx-sls .bx-ui-sls-container { flex: 1 1 auto; }
+.bx-sls input.bx-ui-sls-fake, .bx-sls input.bx-ui-sls-route { border: none; min-height: 0; padding: 0; }
+
+/* Cart lines (.cart-item) */
+.bx-soa-item-table { border-top: 1px solid var(--c-line); }
+.bx-soa-item-tr { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--c-line); }
+.bx-soa-item-tr > .bx-soa-item-td:first-child { flex: 1 1 300px; min-width: 0; }
+.bx-soa-item-block { display: flex; align-items: center; gap: 16px; }
+.bx-soa-item-imgcontainer { width: 96px; height: 96px; flex: none; background-color: var(--c-photo); background-size: contain; background-position: center; background-repeat: no-repeat; }
+.bx-soa-item-content { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.bx-soa-item-title { font-weight: 600; }
+.bx-scu-container { display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; font-size: var(--fs-14); color: var(--c-muted); }
+.bx-soa-item-properties { min-width: 100px; text-align: right; }
+.bx-soa-item-properties .bx-soa-item-td-title { font-size: var(--fs-13); color: var(--c-muted); }
+.bx-soa-wrapper .bx-price { font-size: 18px; font-weight: 600; }
+.bx-soa-wrapper .bx-price-old { color: var(--c-muted); text-decoration: line-through; font-size: var(--fs-14); }
+/* The prototype has no coupon field */
+.bx-soa-coupon { display: none; }
+
+/* Delivery and payment options (.choice) */
+.bx-soa-pp { display: flex; flex-wrap: wrap; gap: 16px; }
+.bx-soa-pp-item-container { display: flex; flex-wrap: wrap; gap: 12px; }
+.bx-soa-pp-company { position: relative; flex: 1 1 200px; display: flex; flex-direction: column; gap: 8px; padding: 16px; border: 2px solid var(--c-line); background: var(--c-bg); cursor: pointer; }
+.bx-soa-pp-company.bx-selected { border-color: var(--c-ink); }
+.bx-soa-pp-company-graf-container { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.bx-soa-pp-company-checkbox { position: absolute; opacity: 0; pointer-events: none; }
+.bx-soa-pp-company-image { width: 40px; height: 40px; flex: none; background-size: contain; background-repeat: no-repeat; background-position: center; }
+.bx-soa-pp-company-smalltitle { font-size: var(--fs-16); font-weight: 600; }
+.bx-soa-pp-delivery-cost { font-size: var(--fs-14); color: var(--c-muted); }
+.bx-soa-pp-desc-container { font-size: var(--fs-14); color: var(--c-text); }
+.bx-soa-pp-company-block { display: flex; flex-direction: column; gap: 8px; padding: 16px; background: var(--c-surface); }
+.bx-soa-pp-company-logo { display: none; }
+.bx-soa-pp-company-subTitle, .bx-soa-pp-list-termin { font-weight: 600; }
+.bx-soa-pp-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.bx-soa-pp-list-description { color: var(--c-muted); }
+.bx-soa-pickup-list { margin: 0; padding: 0; list-style: none; }
+.bx-soa-pickup-list-item { padding: 12px 0; border-bottom: 1px solid var(--c-line); }
+
+/* Collapsed (completed) steps show a short summary */
+.bx-soa-info-block { display: flex; flex-direction: column; gap: 4px; font-size: var(--fs-14); }
+.bx-soa-info-line { display: flex; gap: 8px; }
+.bx-soa-info-title { color: var(--c-muted); }
+
+/* Total (.summary) */
+.bx-soa-cart-total { display: flex; flex-direction: column; gap: 14px; padding: 24px; background: var(--c-surface); }
+.bx-soa-cart-total-line { display: flex; justify-content: space-between; gap: 12px; font-size: var(--fs-15); }
+.bx-soa-cart-t { color: var(--c-muted); }
+.bx-soa-cart-total-line-total { align-items: baseline; padding-top: 14px; border-top: 1px solid var(--c-line-soft); }
+.bx-soa-cart-total-line-total .bx-soa-cart-t { color: var(--c-ink); }
+.bx-soa-cart-total-line-total .bx-soa-cart-d { font-size: var(--fs-28); font-weight: 600; }
+.bx-soa-cart-total-button-container .btn { width: 100%; min-height: 54px; background: var(--c-accent); border-color: var(--c-accent); color: var(--c-on-dark); }
+#bx-soa-total-mobile { margin-bottom: 0; }
+
+/* Save block in the sidebar: button and consent (.consent) */
+#bx-soa-orderSave { display: flex; flex-direction: column-reverse; gap: 14px; }
+#bx-soa-orderSave .btn--accent { min-height: 54px; }
+.bx-soa-wrapper .main-user-consent-request { display: flex; align-items: flex-start; gap: 10px; font-size: var(--fs-13); line-height: 1.5; color: var(--c-text); cursor: pointer; }
+.bx-soa-wrapper .main-user-consent-request input { width: 18px; height: 18px; margin: 1px 0 0; flex: none; accent-color: var(--c-ink); }
+.bx-soa-wrapper .main-user-consent-request-announce-link { text-decoration: underline; text-underline-offset: 3px; }
+
+/* Spacing between buyer fields; the consent text reads as text, its link is underlined lightly. */
+.bx-soa-wrapper .form-group + .form-group { margin-top: 16px; }
+.bx-soa-wrapper .main-user-consent-request-announce-link { text-decoration: underline; text-decoration-color: var(--c-line-strong); text-underline-offset: 3px; }
+
+/* One total and one button, as in the prototype: the script's mobile copy of the total and its own
+   total buttons are hidden; the save button of #bx-soa-orderSave is the only call to action. */
+#bx-soa-total-mobile,
+.bx-soa-wrapper .bx-soa-cart-total-button-container { display: none !important; }
+
+/* Hidden native inputs remain keyboard accessible; focus outlines the whole option. */
+.bx-soa-pp-company:focus-within { outline: 2px solid var(--c-ink); outline-offset: 3px; }
+.bx-soa-pp-company-image { width: 96px; height: 56px; }
+.bx-soa-wrapper :is(button, .btn, .bx-soa-editstep, .close) { min-height: var(--tap); }
+.bx-soa-wrapper .close { min-width: var(--tap); }
+.bx-soa-editstep { display: inline-flex; align-items: center; }
+.bx-soa-wrapper :is(input, textarea, select, button, a):focus-visible {
+  outline: 2px solid var(--c-ink); outline-offset: 3px;
+}
+.bx-soa-wrapper .main-user-consent-request { min-height: var(--tap); }
+.bx-soa-wrapper .bx-sls .dropdown-block {
+  min-height: var(--control-h); background: var(--c-bg); border: 1px solid var(--c-line-strong);
+  border-radius: 0; box-shadow: none; padding: 0 44px 0 14px;
+}
+.bx-soa-wrapper .bx-sls .dropdown-block:focus-within { outline: 2px solid var(--c-ink); outline-offset: 2px; }
+.bx-soa-wrapper .bx-sls .dropdown-icon { display: none; }
+.bx-soa-wrapper .bx-sls .bx-ui-sls-clear { width: var(--tap); height: var(--tap); top: 0; right: 0; }
+.bx-soa-wrapper .bx-sls .dropdown-fade2white { display: none; }
+.bx-soa-wrapper .bx-sls input.bx-ui-sls-fake,
+.bx-soa-wrapper .bx-sls input.bx-ui-sls-route { min-height: var(--control-h); font-family: var(--font); }
+
+/* Only the legal links are underlined, not the whole consent statement. */
+.bx-soa-wrapper .main-user-consent-request-announce-link { text-decoration: none; cursor: auto; }
+.bx-soa-wrapper .main-user-consent-request-announce-link a { text-decoration: underline; text-underline-offset: 3px; }
+#bx-soa-delivery .bx-soa-section-content img,
+#bx-soa-paysystem .bx-soa-section-content img { width: 96px; height: 56px !important; object-fit: contain; }
+.bx-soa-cart-total h2 { font-size: var(--fs-20); font-weight: 600; }

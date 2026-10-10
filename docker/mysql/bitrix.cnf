@@ -1,0 +1,9 @@
+[mysqld]
+character-set-server = utf8mb4
+collation-server = utf8mb4_unicode_ci
+sql_mode =
+transaction-isolation = READ-COMMITTED
+innodb_flush_log_at_trx_commit = 2
+innodb_buffer_pool_size = 512M
+innodb_strict_mode = OFF
+max_allowed_packet = 64M

@@ -1,0 +1,65 @@
+/* Bitrix-specific additions. The prototype CSS (tokens.css, main.css) is copied as is. */
+.sprite { display: none; }
+.mobile-menu__sale { color: var(--c-accent); }
+.payments--links { gap: 6px 18px; }
+
+/* Wrapper that sale.basket.basket.line puts around the cart link. */
+.basket-line { display: contents; }
+
+/* Tap targets: the project rule is 44px minimum (--tap), so these override the smaller prototype values. */
+.logo { min-height: var(--tap); justify-content: center; }
+/* The phone shown as plain text (placeholder) is a span, so it needs the same flex alignment as the links. */
+.topbar__links a, .topbar__links .topbar__phone { min-height: var(--tap); display: flex; align-items: center; }
+.megamenu__col a { min-height: var(--tap); }
+.footer__col a { min-height: var(--tap); }
+.footer__legal a { min-height: var(--tap); display: inline-flex; align-items: center; }
+@media (max-width: 767px) {
+  .mobile-menu__sub a { min-height: var(--tap); }
+}
+
+/* Mega menu: exactly five columns on wide desktops (auto-fill pushed the fifth to a second row); narrower screens keep auto-fill. Links have no extra gap. */
+.megamenu__col { gap: 0; }
+@media (min-width: 1200px) {
+  .megamenu__panel { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 24px; }
+}
+
+/* Inline link in the cookie text: a taller hit area without changing the line layout. */
+.cookie__text a { padding: 14px 0; }
+
+/* The skip link moves focus to <main>; it is a target, not a control, so no outline. */
+main:focus { outline: none; }
+
+/* Product photos fill the prototype's photo boxes. */
+.photo { overflow: hidden; }
+.photo img { width: 100%; height: 100%; object-fit: contain; }
+
+/* Catalog: the smart filter form is laid out by the .filters column. */
+[data-smart-filter] { display: contents; }
+.dir-btn[aria-current="page"] { font-weight: 600; }
+.swatch-dot { background-size: cover; background-position: center; }
+/* Filter options as pills/checks: state comes from the checkbox inside. */
+.size-grid .pill { cursor: pointer; }
+.pill:has(input:checked) { background: var(--c-ink); border-color: var(--c-ink); color: var(--c-on-dark); }
+.pill:has(input:focus-visible) { outline: 2px solid var(--c-ink); outline-offset: 2px; }
+.pill:has(input:disabled), .check:has(input:disabled) { color: var(--c-disabled); cursor: not-allowed; }
+
+/* Cart: the component needs an <input> for the quantity; it looks like the prototype's <output>. */
+.qty input { width: 36px; min-width: 28px; height: 100%; padding: 0; border: none; background: transparent; text-align: center; font-weight: 600; font-size: var(--fs-16); }
+.qty input:disabled { color: var(--c-disabled); }
+.summary h2 { font-size: var(--fs-20); }
+.summary .btn--accent { min-height: 54px; }
+.cart-item__photo img { width: 100%; height: 100%; object-fit: contain; }
+
+/* Empty favorites: the prototype's large heart icon. */
+.empty > .icon { width: 40px; height: 40px; }
+
+/* Apply the minimum target size to catalog and cart controls too. */
+.pill, .size, .thumb, .qty button, .qty input, .cart-item__remove,
+.pagination a, .pagination button, .sort select, .info-nav a,
+.link-u, .link-line { min-height: var(--tap); }
+.pill, .size, .thumb, .qty button, .cart-item__remove { min-width: var(--tap); }
+.check, .consent { min-height: var(--tap); align-items: center; }
+.check input, .consent input { flex-shrink: 0; }
+
+.more-btn, .chip, .gallery__thumb, .gallery__nav { min-height: var(--tap); }
+.gallery__thumb, .gallery__nav { min-width: var(--tap); }
