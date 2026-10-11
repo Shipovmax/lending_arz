@@ -1,0 +1,208 @@
+/* Visual polish over the prototype CSS: same structure and palette, finished look. Loaded last; values come from tokens.css.
+   Hover effects live under (hover: hover) so they do not stick after a tap on touch screens. */
+
+/* --------------------------------------------------------------------------
+   Product photos: studio shots on white blend into the photo tint (no white bands), with an inset
+   -------------------------------------------------------------------------- */
+.photo img { box-sizing: border-box; padding: var(--photo-inset); mix-blend-mode: multiply; transition: transform var(--t-slow); }
+.gallery__main.photo img { padding: calc(var(--photo-inset) / 2); }
+.gallery__thumb.photo img, .cart-item__photo.photo img { padding: calc(var(--photo-inset) * 0.75); }
+.bx-soa-item-imgcontainer { background-blend-mode: multiply; }
+
+/* --------------------------------------------------------------------------
+   Headings
+   -------------------------------------------------------------------------- */
+.section { gap: var(--sp-5); }
+.section__title { font-size: var(--fs-32); letter-spacing: var(--tracking-tight); }
+.page-title { letter-spacing: var(--tracking-tight); }
+.breadcrumbs { align-items: center; }
+.breadcrumbs li { display: flex; align-items: center; }
+
+/* --------------------------------------------------------------------------
+   Home: hero (typographic, dark)
+   -------------------------------------------------------------------------- */
+.hero {
+  min-height: var(--hero-min-h); padding: var(--hero-pad);
+  display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); align-items: end; gap: var(--sp-8);
+  background: var(--c-dark); color: var(--c-on-dark);
+}
+.hero__content { gap: var(--sp-5); max-width: 760px; }
+.hero__eyebrow { display: flex; align-items: center; gap: var(--sp-3); color: var(--c-on-dark-muted); }
+.hero__eyebrow::before { content: ""; width: var(--sp-5); height: 2px; background: var(--c-accent); flex: none; }
+.hero__title { font-size: clamp(var(--fs-40), 5.6vw, var(--fs-80)); line-height: 0.98; letter-spacing: var(--tracking-tight); }
+.hero__title-tail { white-space: nowrap; }
+.hero__lead { max-width: 46ch; font-size: var(--fs-17); line-height: 1.6; color: var(--c-on-dark-muted); }
+.hero__actions { padding-top: var(--sp-2); }
+/* Purchase terms (moved here from the separate terms block) */
+.hero__facts { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--c-dark-border); }
+.hero__fact { display: flex; align-items: flex-start; gap: var(--sp-4); min-height: var(--tap); padding: var(--sp-4) 0; border-bottom: 1px solid var(--c-dark-border); }
+.hero__fact .icon { color: var(--c-accent); margin-top: 1px; }
+.hero__fact > span { display: flex; flex-direction: column; gap: 2px; }
+.hero__fact-title { font-size: var(--fs-15); font-weight: 600; }
+.hero__fact-text { font-size: var(--fs-14); line-height: 1.5; color: var(--c-on-dark-muted); }
+.hero :focus-visible { outline-color: var(--c-on-dark); }
+
+/* --------------------------------------------------------------------------
+   Home: direction gateways (typographic until there are real photos)
+   -------------------------------------------------------------------------- */
+.gateways { gap: var(--sp-2); }
+.gateway {
+  position: relative; min-height: var(--gateway-min-h); padding: var(--card-pad);
+  justify-content: space-between; gap: var(--sp-4);
+  background: var(--c-surface); color: var(--c-ink);
+}
+.gateway__name { display: block; padding-right: var(--sp-6); font-size: var(--fs-28); font-weight: 500; line-height: 1.1; letter-spacing: var(--tracking-tight); text-transform: none; }
+.gateway__kind { font-size: var(--fs-14); color: var(--c-muted); }
+.gateway__arrow { position: absolute; top: var(--card-pad); right: var(--card-pad); transition: transform var(--t); }
+.gateway--dark { background: var(--c-dark); color: var(--c-on-dark); }
+.gateway--dark .gateway__kind { color: var(--c-on-dark-muted); }
+.gateway:focus-visible { outline-offset: 3px; }
+
+/* --------------------------------------------------------------------------
+   Home: category tiles with catalog photos
+   -------------------------------------------------------------------------- */
+.tiles { gap: var(--sp-4) var(--sp-3); }
+.tile { padding: 0; border: none; gap: var(--sp-3); }
+.tile__name { font-size: var(--fs-15); font-weight: 500; }
+.tile--all .tile__photo {
+  display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start;
+  padding: var(--card-pad); background: var(--c-ink); color: var(--c-on-dark);
+  font-size: var(--fs-20); font-weight: 500; line-height: 1.15;
+}
+
+/* --------------------------------------------------------------------------
+   Home: store, brands
+   -------------------------------------------------------------------------- */
+.store { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: start; gap: var(--sp-5) var(--sp-8); }
+.store__head { display: flex; flex-direction: column; align-items: flex-start; gap: var(--sp-4); }
+.store__pin { width: var(--icon-lg); height: var(--icon-lg); color: var(--c-accent); stroke-width: 1.4; }
+.store__caption { max-width: 44ch; font-size: var(--fs-16); line-height: 1.6; color: var(--c-muted); }
+.store__actions { padding-top: var(--sp-2); }
+.store__list { font-size: var(--fs-16); }
+
+
+.brand { border-color: transparent; background: var(--c-surface); transition: color var(--t), background-color var(--t); }
+
+/* --------------------------------------------------------------------------
+   Product card
+   -------------------------------------------------------------------------- */
+.product-grid { gap: 44px var(--sp-4); }
+/* Product rows on the home and product pages: four equal columns instead of auto-fill gaps */
+@media (min-width: 1024px) {
+  .section > .product-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+.card { gap: 6px; }
+.card__media { overflow: hidden; }
+.card__fav { top: var(--sp-2); right: var(--sp-2); background: var(--c-bg); }
+.card__price { margin-top: var(--sp-2); }
+.card__name.link-u {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+  min-height: var(--tap); padding: 1px 0; font-size: var(--fs-15); color: var(--c-ink);
+}
+.card__stock { padding-bottom: var(--sp-3); }
+.card__stock.ok::before { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: var(--sp-2); background: currentColor; vertical-align: middle; }
+/* margin-top: auto from main.css keeps the buttons of a row on one line */
+.card__buy { border-color: var(--c-line-strong); }
+
+/* --------------------------------------------------------------------------
+   Catalog, product page, cart
+   -------------------------------------------------------------------------- */
+.catalog-head .page-title { font-size: var(--fs-48); }
+.empty { border: none; background: var(--c-surface); }
+/* Inline links inside text keep the line height; the 44px rule made them inline-flex boxes that split the paragraph */
+.cookie__text a { display: inline; min-height: 0; min-width: 0; }
+.buybox__title, .buybox__price .price { letter-spacing: var(--tracking-tight); }
+.buybox__top { align-items: flex-start; }
+.buybox__top .small { flex: none; white-space: nowrap; }
+
+/* --------------------------------------------------------------------------
+   Footer
+   -------------------------------------------------------------------------- */
+.footer { background: var(--c-dark); }
+
+/* --------------------------------------------------------------------------
+   Hover (pointer devices only)
+   -------------------------------------------------------------------------- */
+@media (hover: hover) {
+  .btn:not(:disabled):hover { filter: none; background: var(--c-ink); border-color: var(--c-ink); color: var(--c-on-dark); }
+  .btn--primary:not(:disabled):hover { background: var(--c-accent); border-color: var(--c-accent); }
+  .btn--accent:not(:disabled):hover { background: var(--c-accent-hover); border-color: var(--c-accent-hover); }
+  .btn--light:not(:disabled):hover { background: var(--c-surface); border-color: var(--c-surface); color: var(--c-ink); }
+  .hero .btn--light:not(:disabled):hover { background: transparent; border-color: var(--c-on-dark); color: var(--c-on-dark); }
+  .search__submit:hover { background: var(--c-accent-hover); }
+  .catalog-btn:hover { background: var(--c-dark-raised); }
+  .nav__link:hover { border-bottom-color: var(--c-line-strong); }
+  .nav__link[aria-current="page"]:hover { border-bottom-color: var(--c-ink); }
+
+  .card__media:hover .photo img, .tile:hover .photo img { transform: scale(1.04); }
+  .card__fav:hover { color: var(--c-accent); }
+  .card:hover .card__buy { border-color: var(--c-ink); }
+
+  .gateway:hover { background: var(--c-ink); color: var(--c-on-dark); }
+  .gateway:hover .gateway__kind { color: var(--c-on-dark-muted); }
+  .gateway:hover .gateway__arrow { transform: translateX(var(--sp-1)); }
+  .gateway--dark:hover { background: var(--c-accent); }
+  .gateway--dark:hover .gateway__kind { color: var(--c-on-dark); }
+  .tile:hover .tile__name { text-decoration: underline; text-underline-offset: 4px; }
+  .tile--all:hover .tile__photo { background: var(--c-accent); }
+  .hero__fact:hover .hero__fact-title { text-decoration: underline; text-underline-offset: 4px; }
+  .brand:hover { background: var(--c-photo-alt); color: var(--c-ink); }
+
+  .dir-btn:hover { color: var(--c-accent); }
+  .pagination a:hover { background: var(--c-surface); }
+  .gallery__thumb:hover { border-color: var(--c-line-strong); }
+  .size:not(:disabled):not([aria-pressed="true"]):hover { border-color: var(--c-ink); }
+  .swatch:hover { border-color: var(--c-line-strong); }
+  .tabs__tab:hover { color: var(--c-ink); }
+
+  .footer__col a:hover, .footer__legal a:hover { color: var(--c-on-dark); }
+  .socials a:hover { border-color: var(--c-on-dark); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .photo img, .gateway__arrow { transition: none; }
+  .card__media:hover .photo img, .tile:hover .photo img { transform: none; }
+}
+
+/* --------------------------------------------------------------------------
+   Phone
+   -------------------------------------------------------------------------- */
+@media (max-width: 1023px) {
+  .hero { grid-template-columns: 1fr; align-items: start; }
+  .hero__facts { display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--sp-5); }
+}
+
+@media (max-width: 767px) {
+  .hero__facts { grid-template-columns: 1fr; }
+  .section { gap: var(--sp-4); }
+  .section__title { font-size: var(--fs-22); }
+  .hero { min-height: 0; aspect-ratio: auto; padding: var(--sp-6) var(--hero-pad) var(--sp-2); gap: var(--sp-5); }
+  .hero__content { gap: var(--sp-4); }
+  .hero__title { font-size: min(var(--fs-36), 9.4vw); line-height: 1.04; }
+  .hero__fact { padding: var(--sp-3) 0; }
+  .hero__fact:last-child { border-bottom: none; }
+  .hero__lead { font-size: var(--fs-15); }
+  .hero__actions { padding-top: var(--sp-1); }
+  .gateway { gap: var(--sp-2); }
+  .gateways { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gateway__name { padding-right: 0; font-size: min(var(--fs-20), 5.4vw); }
+  .gateway__kind { padding-right: var(--sp-5); }
+  .gateway__kind { font-size: var(--fs-12); }
+  .gateway__arrow { top: auto; bottom: var(--card-pad); width: var(--icon-sm); height: var(--icon-sm); }
+  .tiles { gap: var(--sp-4) var(--sp-2); }
+  .tile__name { font-size: var(--fs-13); }
+  .tile--all .tile__photo { padding: var(--sp-3); font-size: var(--fs-14); }
+  .tile--all .tile__photo .icon { width: var(--icon-sm); height: var(--icon-sm); }
+  .store { grid-template-columns: 1fr; gap: var(--sp-5); }
+  .store__pin { width: var(--tap); height: var(--tap); }
+  .store__caption { font-size: var(--fs-15); }
+  .product-grid { gap: var(--sp-6) 10px; }
+  .card__name.link-u { font-size: var(--fs-13); }
+  .catalog-head .page-title { font-size: var(--fs-28); }
+  /* Product tabs scroll sideways instead of wrapping one tab onto its own line */
+  .tabs__list {
+    flex-wrap: nowrap; overflow-x: auto; gap: var(--sp-5); padding-right: var(--sp-7); scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - var(--sp-7)), transparent);
+    mask-image: linear-gradient(to right, #000 calc(100% - var(--sp-7)), transparent);
+  }
+  .tabs__tab { flex: none; }
+}

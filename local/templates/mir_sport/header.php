@@ -13,6 +13,7 @@ $asset->addCss(SITE_TEMPLATE_PATH . '/css/fonts.css');
 $asset->addCss(SITE_TEMPLATE_PATH . '/css/tokens.css');
 $asset->addCss(SITE_TEMPLATE_PATH . '/css/main.css');
 $asset->addCss(SITE_TEMPLATE_PATH . '/css/bitrix.css');
+$asset->addCss(SITE_TEMPLATE_PATH . '/css/polish.css');
 $asset->addJs(SITE_TEMPLATE_PATH . '/js/shell.js');
 
 $contacts = \MirSport\contacts();

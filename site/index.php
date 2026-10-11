@@ -9,30 +9,30 @@ $APPLICATION->SetPageProperty('description', 'Магазин спорттова�
 $APPLICATION->SetPageProperty('hide_h1', 'Y');
 
 require_once $_SERVER['DOCUMENT_ROOT'] . SITE_TEMPLATE_PATH . '/include/contacts.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . SITE_TEMPLATE_PATH . '/include/showcase.php';
 $contacts = \MirSport\contacts();
+
+// Category tiles come from the catalog itself (see include/showcase.php), so a 1C import updates them.
+$categoryTiles = \MirSport\section_tiles($store['catalog_iblock_id']);
 ?>
 <div class="container page">
 
   <section class="hero">
-    <span class="hero__photo-label">Фото: витрина магазина или съёмка сезона</span>
     <div class="hero__content">
-      <span class="hero__eyebrow">Магазин в Арзамасе · доставка по России</span>
-      <h1 class="hero__title">Спорттовары и всё для рыбалки</h1>
+      <span class="hero__eyebrow">Магазин в Арзамасе&nbsp;· доставка по России</span>
+      <h1 class="hero__title">Спорттовары <span class="hero__title-tail">и всё для рыбалки</span></h1>
+      <p class="hero__lead">Одежда, обувь и инвентарь для спорта, снасти и экипировка для рыбалки. Самовывоз из магазина или доставка СДЭК.</p>
       <div class="hero__actions">
-        <a class="btn btn--primary" href="<?= SITE_DIR ?>catalog/">Спорттовары</a>
+        <a class="btn btn--accent" href="<?= SITE_DIR ?>catalog/">Спорттовары</a>
         <a class="btn btn--light" href="<?= SITE_DIR ?>catalog/">Рыбалка</a>
       </div>
     </div>
-  </section>
-
-  <section class="section" aria-labelledby="sections-title">
-    <h2 class="section__title" id="sections-title">Разделы</h2>
-    <div class="gateways">
-      <a class="gateway" href="<?= SITE_DIR ?>catalog/"><span class="gateway__photo photo photo--alt">Фото</span><span class="gateway__name">Мужчинам <span aria-hidden="true">→</span></span></a>
-      <a class="gateway" href="<?= SITE_DIR ?>catalog/"><span class="gateway__photo photo">Фото</span><span class="gateway__name">Женщинам <span aria-hidden="true">→</span></span></a>
-      <a class="gateway" href="<?= SITE_DIR ?>catalog/"><span class="gateway__photo photo">Фото</span><span class="gateway__name">Подросткам <span aria-hidden="true">→</span></span></a>
-      <a class="gateway" href="<?= SITE_DIR ?>catalog/"><span class="gateway__photo photo photo--alt">Фото</span><span class="gateway__name">Рыбалка <span aria-hidden="true">→</span></span></a>
-    </div>
+    <ul class="hero__facts" aria-label="Условия покупки">
+      <li><a class="hero__fact" href="<?= SITE_DIR ?>info/#delivery"><svg class="icon"><use href="#i-store"/></svg><span><span class="hero__fact-title">Самовывоз</span><span class="hero__fact-text">Из магазина в Арзамасе, бесплатно.</span></span></a></li>
+      <li><a class="hero__fact" href="<?= SITE_DIR ?>info/#delivery"><svg class="icon"><use href="#i-truck"/></svg><span><span class="hero__fact-title">Доставка СДЭК</span><span class="hero__fact-text">В пункт выдачи или курьером по России.</span></span></a></li>
+      <li><a class="hero__fact" href="<?= SITE_DIR ?>info/#payment"><svg class="icon"><use href="#i-card"/></svg><span><span class="hero__fact-title">Оплата</span><span class="hero__fact-text">Картой и СБП онлайн или при получении.</span></span></a></li>
+      <li><a class="hero__fact" href="<?= SITE_DIR ?>info/#return"><svg class="icon"><use href="#i-return"/></svg><span><span class="hero__fact-title">Возврат и обмен</span><span class="hero__fact-text">По закону о защите прав потребителей.</span></span></a></li>
+    </ul>
   </section>
 
   <section class="section" aria-labelledby="cats-title">
@@ -41,12 +41,20 @@ $contacts = \MirSport\contacts();
       <a class="caps link-u" href="<?= SITE_DIR ?>catalog/">Весь каталог</a>
     </div>
     <div class="tiles">
-      <a class="tile" href="<?= SITE_DIR ?>catalog/shoes/"><span class="tile__photo photo"></span><span class="tile__name">Обувь</span></a>
-      <a class="tile" href="<?= SITE_DIR ?>catalog/sportswear/"><span class="tile__photo photo"></span><span class="tile__name">Спортивная одежда</span></a>
-      <a class="tile" href="<?= SITE_DIR ?>catalog/t-shirts/"><span class="tile__photo photo"></span><span class="tile__name">Футболки</span></a>
-      <a class="tile" href="<?= SITE_DIR ?>catalog/pants/"><span class="tile__photo photo"></span><span class="tile__name">Штаны</span></a>
-      <a class="tile" href="<?= SITE_DIR ?>catalog/accessories/"><span class="tile__photo photo"></span><span class="tile__name">Аксессуары</span></a>
-      <a class="tile" href="<?= SITE_DIR ?>catalog/"><span class="tile__photo photo"></span><span class="tile__name">Весь каталог</span></a>
+      <?php foreach ($categoryTiles as $tile): ?>
+      <a class="tile" href="<?= htmlspecialcharsbx($tile['url']) ?>"><span class="tile__photo photo"><?php if ($tile['photo'] !== ''): ?><img src="<?= htmlspecialcharsbx($tile['photo']) ?>" alt="" loading="lazy"><?php endif ?></span><span class="tile__name"><?= htmlspecialcharsbx($tile['name']) ?></span></a>
+      <?php endforeach ?>
+      <a class="tile tile--all" href="<?= SITE_DIR ?>catalog/"><span class="tile__photo"><span class="tile__all-text">Весь каталог</span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></span></a>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="sections-title">
+    <h2 class="section__title" id="sections-title">Разделы</h2>
+    <div class="gateways">
+      <a class="gateway" href="<?= SITE_DIR ?>catalog/"><span class="gateway__name">Мужчинам</span><span class="gateway__kind">Мужская одежда и обувь</span><svg class="icon gateway__arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      <a class="gateway" href="<?= SITE_DIR ?>catalog/"><span class="gateway__name">Женщинам</span><span class="gateway__kind">Женская одежда и обувь</span><svg class="icon gateway__arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      <a class="gateway" href="<?= SITE_DIR ?>catalog/"><span class="gateway__name">Подросткам</span><span class="gateway__kind">Одежда и обувь для подростков</span><svg class="icon gateway__arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      <a class="gateway gateway--dark" href="<?= SITE_DIR ?>catalog/"><span class="gateway__name">Рыбалка</span><span class="gateway__kind">Снасти, приманки, экипировка</span><svg class="icon gateway__arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
     </div>
   </section>
 
@@ -103,26 +111,20 @@ $contacts = \MirSport\contacts();
   </section>
 
   <section class="store" aria-labelledby="store-title">
-    <div class="store__photo photo photo--alt">Фото магазина</div>
-    <div class="store__info">
+    <div class="store__head">
+      <svg class="icon store__pin" aria-hidden="true"><use href="#i-pin"/></svg>
       <h2 class="store__title" id="store-title">Магазин в Арзамасе</h2>
-      <dl class="def-list">
-        <div><dt>Адрес</dt><dd><?= htmlspecialcharsbx($contacts['address']) ?></dd></div>
-        <div><dt>Часы</dt><dd><?= htmlspecialcharsbx($contacts['hours']) ?></dd></div>
-        <div><dt>Телефон</dt><dd><?= \MirSport\link_or_text($contacts['phone'], $contacts['phone_href'], '') ?></dd></div>
-      </dl>
+      <p class="store__caption">Магазин и пункт самовывоза. Заказ можно забрать в день оформления, если товар в наличии.</p>
       <div class="store__actions">
         <a class="btn btn--primary" href="https://yandex.ru/maps/?text=<?= rawurlencode('Арзамас, ' . $contacts['address']) ?>" target="_blank" rel="noopener">Построить маршрут</a>
         <a class="btn" href="<?= SITE_DIR ?>info/#contacts">Все контакты</a>
       </div>
     </div>
-  </section>
-
-  <section class="terms" aria-label="Условия покупки">
-    <a class="term" href="<?= SITE_DIR ?>info/#delivery"><svg class="icon"><use href="#i-store"/></svg><span class="term__title">Самовывоз</span><span class="term__text">Из магазина в Арзамасе, бесплатно.</span></a>
-    <a class="term" href="<?= SITE_DIR ?>info/#delivery"><svg class="icon"><use href="#i-truck"/></svg><span class="term__title">Доставка СДЭК</span><span class="term__text">В пункт выдачи или курьером по России.</span></a>
-    <a class="term" href="<?= SITE_DIR ?>info/#payment"><svg class="icon"><use href="#i-card"/></svg><span class="term__title">Оплата</span><span class="term__text">Картой и СБП онлайн или при получении.</span></a>
-    <a class="term" href="<?= SITE_DIR ?>info/#return"><svg class="icon"><use href="#i-return"/></svg><span class="term__title">Возврат и обмен</span><span class="term__text">По закону о защите прав потребителей.</span></a>
+    <dl class="def-list store__list">
+      <div><dt>Адрес</dt><dd><?= htmlspecialcharsbx($contacts['address']) ?></dd></div>
+      <div><dt>Часы</dt><dd><?= htmlspecialcharsbx($contacts['hours']) ?></dd></div>
+      <div><dt>Телефон</dt><dd><?= \MirSport\link_or_text($contacts['phone'], $contacts['phone_href'], '') ?></dd></div>
+    </dl>
   </section>
 
   <section class="section" aria-labelledby="brands-title">
