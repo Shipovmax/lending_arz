@@ -14,9 +14,12 @@ use Bitrix\Main\Loader;
 
 require_once $_SERVER['DOCUMENT_ROOT'] . SITE_TEMPLATE_PATH . '/include/format.php';
 
-use function MirSport\{image, rub};
+use function MirSport\{image, rub, size_labels};
 
-$sizeProps = ['SIZES_SHOES', 'SIZES_CLOTHES'];
+// Which offer properties carry the size and the color is configured in local/config/store.php.
+$store = require $_SERVER['DOCUMENT_ROOT'] . '/local/config/store.php';
+$sizeProps = $store['size_props'];
+$colorProps = $store['color_props'];
 $photoMain = [720, 960];
 $photoThumb = [152, 203];
 
@@ -43,7 +46,7 @@ $photos = static function (array $element) use ($photoMain, $photoThumb): array 
 
 $priceOf = static function (array $element): ?array {
     $row = $element['ITEM_PRICES'][$element['ITEM_PRICE_SELECTED'] ?? 0] ?? null;
-    if (!$row) {
+    if (!$row || (float)$row['RATIO_PRICE'] <= 0) {
         return null;
     }
     $old = (float)$row['RATIO_BASE_PRICE'] > (float)$row['RATIO_PRICE'] ? rub((float)$row['RATIO_BASE_PRICE']) : '';
@@ -54,20 +57,30 @@ $offers = [];
 $colors = [];
 $sizes = [];
 $sizeCode = '';
+$sizeName = '';
 foreach ($arResult['OFFERS'] ?? [] as $offer) {
-    $color = (string)($offer['PROPERTIES']['COLOR_REF']['VALUE'] ?? '');
+    $color = '';
+    foreach ($colorProps as $code) {
+        $color = trim((string)($offer['PROPERTIES'][$code]['VALUE'] ?? ''));
+        if ($color !== '') {
+            break;
+        }
+    }
     $size = '';
     foreach ($sizeProps as $code) {
         $value = (string)($offer['PROPERTIES'][$code]['VALUE'] ?? '');
         if ($value !== '') {
             $size = $value;
             $sizeCode = $code;
+            $sizeName = trim((string)($offer['PROPERTIES'][$code]['NAME'] ?? ''));
             $sizes[$value] = (int)($offer['PROPERTIES'][$code]['VALUE_SORT'] ?? 0);
             break;
         }
     }
     if ($color !== '') {
-        $colors[$color] = $colors[$color] ?? ['name' => $color, 'pict' => '', 'photos' => []];
+        // 1C color names come as "цв.зеленый": show just "зеленый".
+        $colorName = trim((string)preg_replace('/^цв\.?\s*/iu', '', $color));
+        $colors[$color] = $colors[$color] ?? ['name' => $colorName !== '' ? $colorName : $color, 'pict' => '', 'photos' => []];
         if (!$colors[$color]['photos']) {
             $colors[$color]['photos'] = $photos($offer);
         }
@@ -84,8 +97,15 @@ foreach ($arResult['OFFERS'] ?? [] as $offer) {
     ];
 }
 asort($sizes);
+$sizeLabels = \MirSport\size_labels(array_keys($sizes));
+// Sizes in natural order (10,5 < 14 < 14,5); the catalog's own sort order is kept when it is set.
+$sizeKeys = array_keys($sizes);
+if (count(array_unique($sizes)) <= 1) {
+    $sizeKeys = array_keys($sizeLabels);
+}
 
 // Color names and swatch pictures come from the ColorReference highload block (the COLOR_REF directory).
+// A plain list value (1C) has no directory row: the swatch then shows the first photo of that color.
 if ($colors && Loader::includeModule('highloadblock')) {
     $block = HighloadBlockTable::getList(['filter' => ['=NAME' => 'ColorReference']])->fetch();
     if ($block) {
@@ -99,6 +119,11 @@ if ($colors && Loader::includeModule('highloadblock')) {
             $ordered[$xml]['pict'] = !empty($row['UF_FILE']) ? image((int)$row['UF_FILE'], 112, 150) : '';
         }
         $colors = $ordered + $colors;
+    }
+}
+foreach ($colors as $xml => $color) {
+    if (($color['pict'] ?? '') === '' && !empty($color['photos'][0]['thumb'])) {
+        $colors[$xml]['pict'] = $color['photos'][0]['thumb'];
     }
 }
 
@@ -127,7 +152,7 @@ $gallery = $defaultColor !== '' && !empty($colors[$defaultColor]['photos']) ? $c
 
 $specs = [];
 foreach ($arResult['DISPLAY_PROPERTIES'] ?? [] as $code => $prop) {
-    if (in_array($code, ['ARTNUMBER', 'MORE_PHOTO', 'BRAND_REF'], true)) {
+    if (in_array($code, array_merge($store['article_props'], $store['brand_props'], ['MORE_PHOTO']), true)) {
         continue;
     }
     $value = is_array($prop['DISPLAY_VALUE']) ? implode(', ', $prop['DISPLAY_VALUE']) : (string)$prop['DISPLAY_VALUE'];
@@ -137,17 +162,32 @@ foreach ($arResult['DISPLAY_PROPERTIES'] ?? [] as $code => $prop) {
     }
 }
 
-$brand = trim(html_entity_decode(strip_tags((string)($arResult['DISPLAY_PROPERTIES']['BRAND_REF']['DISPLAY_VALUE'] ?? ''))));
+$brand = '';
+foreach ($store['brand_props'] as $code) {
+    $value = $arResult['DISPLAY_PROPERTIES'][$code]['DISPLAY_VALUE'] ?? '';
+    $brand = trim(html_entity_decode(strip_tags(is_array($value) ? implode(', ', $value) : (string)$value)));
+    if ($brand !== '') {
+        break;
+    }
+}
 if ($brand === '') {
     $brand = trim((string)($arResult['PROPERTIES']['MANUFACTURER']['~VALUE'] ?? ''));
+}
+$article = '';
+foreach ($store['article_props'] as $code) {
+    $article = trim((string)($arResult['PROPERTIES'][$code]['~VALUE'] ?? ''));
+    if ($article !== '') {
+        break;
+    }
 }
 
 $arResult['MIR'] = [
     'HAS_OFFERS' => (bool)$offers,
     'OFFERS' => $offers,
     'COLORS' => $colors,
-    'SIZES' => array_keys($sizes),
-    'SIZE_LABEL' => $sizeCode === 'SIZES_SHOES' ? 'Размер обуви (RU)' : 'Размер (RU)',
+    'SIZES' => $sizeKeys,
+    'SIZE_LABELS' => $sizeLabels,
+    'SIZE_LABEL' => $sizeCode === 'SIZES_SHOES' ? 'Размер обуви (RU)' : ($sizeName !== '' && $sizeCode !== 'SIZES_CLOTHES' ? $sizeName : 'Размер (RU)'),
     'DEFAULT_COLOR' => $defaultColor,
     'PRICE' => $start['price'] ?? ($own['price'] ?? ''),
     'OLD_PRICE' => $start['old'] ?? ($own['old'] ?? ''),
@@ -157,6 +197,6 @@ $arResult['MIR'] = [
     'GALLERY' => $gallery,
     'SPECS' => $specs,
     'BRAND' => $brand,
-    'ARTICLE' => trim((string)($arResult['PROPERTIES']['ARTNUMBER']['~VALUE'] ?? '')),
+    'ARTICLE' => $article,
     'DESCRIPTION' => $arResult['DETAIL_TEXT_TYPE'] === 'html' ? (string)$arResult['~DETAIL_TEXT'] : nl2br(htmlspecialcharsbx((string)$arResult['~DETAIL_TEXT'])),
 ];

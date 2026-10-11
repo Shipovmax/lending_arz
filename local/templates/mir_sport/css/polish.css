@@ -115,6 +115,19 @@
 .buybox__top { align-items: flex-start; }
 .buybox__top .small { flex: none; white-space: nowrap; }
 
+/* A color without a photo is shown as a text button instead of an empty square */
+.swatch--text { width: auto; min-width: var(--control-h); min-height: var(--control-h); aspect-ratio: auto; padding: 0 var(--sp-3); font-size: var(--fs-14); }
+.swatch--text span { display: flex; align-items: center; justify-content: center; height: 100%; border: none; white-space: nowrap; }
+.swatch--text[aria-pressed="true"] { background: var(--c-ink); color: var(--c-on-dark); }
+
+/* Stock status on the product page: green when it can be bought, red when not */
+.stock { margin: 0; font-size: var(--fs-16); font-weight: 500; color: var(--c-success); }
+.stock::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: var(--sp-2); background: currentColor; vertical-align: middle; }
+.stock--out { color: var(--c-danger); }
+
+/* 1C descriptions can contain long unbroken strings */
+.tabs__panel, .buybox__title, .card__name { overflow-wrap: anywhere; }
+
 /* --------------------------------------------------------------------------
    Footer
    -------------------------------------------------------------------------- */
@@ -198,6 +211,7 @@
   .product-grid { gap: var(--sp-6) 10px; }
   .card__name.link-u { font-size: var(--fs-13); }
   .catalog-head .page-title { font-size: var(--fs-28); }
+  .mobile-menu__item { display: flex; align-items: center; min-height: 54px; border-bottom: 1px solid var(--c-line); font-size: var(--fs-17); font-weight: 500; }
   /* Product tabs scroll sideways instead of wrapping one tab onto its own line */
   .tabs__list {
     flex-wrap: nowrap; overflow-x: auto; gap: var(--sp-5); padding-right: var(--sp-7); scrollbar-width: none;

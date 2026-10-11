@@ -13,6 +13,7 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) {
  */
 $this->setFrameMode(true);
 $APPLICATION->SetPageProperty('hide_h1', 'Y');
+$store = require $_SERVER['DOCUMENT_ROOT'] . '/local/config/store.php';
 ?>
 <div class="container page page--tight">
   <nav aria-label="Хлебные крошки">
@@ -26,7 +27,7 @@ $elementId = $APPLICATION->IncludeComponent('bitrix:catalog.element', 'mir', [
     'ELEMENT_CODE' => $arResult['VARIABLES']['ELEMENT_CODE'] ?? '',
     'SECTION_ID' => $arResult['VARIABLES']['SECTION_ID'] ?? '',
     'SECTION_CODE' => $arResult['VARIABLES']['SECTION_CODE'] ?? '',
-    'PROPERTY_CODE' => array_merge($arParams['DETAIL_PROPERTY_CODE'] ?? [], ['ARTNUMBER', 'BRAND_REF', 'MORE_PHOTO']),
+    'PROPERTY_CODE' => array_values(array_unique(array_merge($arParams['DETAIL_PROPERTY_CODE'] ?? [], $store['article_props'], $store['brand_props'], ['MORE_PHOTO']))),
     'META_KEYWORDS' => $arParams['DETAIL_META_KEYWORDS'],
     'META_DESCRIPTION' => $arParams['DETAIL_META_DESCRIPTION'],
     'BROWSER_TITLE' => $arParams['DETAIL_BROWSER_TITLE'],
@@ -92,6 +93,8 @@ if ((int)$elementId > 0) {
         'OFFERS_FIELD_CODE' => $arParams['LIST_OFFERS_FIELD_CODE'],
         'OFFERS_PROPERTY_CODE' => $arParams['LIST_OFFERS_PROPERTY_CODE'] ?? [],
         'OFFERS_LIMIT' => '0',
+        'HIDE_NOT_AVAILABLE' => $arParams['HIDE_NOT_AVAILABLE'],
+        'HIDE_NOT_AVAILABLE_OFFERS' => $arParams['HIDE_NOT_AVAILABLE_OFFERS'] ?? 'N',
         'SECTION_URL' => $arResult['FOLDER'] . $arResult['URL_TEMPLATES']['section'],
         'DETAIL_URL' => $arResult['FOLDER'] . $arResult['URL_TEMPLATES']['element'],
         'BASKET_URL' => $arParams['BASKET_URL'],

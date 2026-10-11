@@ -27,7 +27,7 @@ $wrapGrid = ($arParams['MIR_WRAP_GRID'] ?? 'Y') !== 'N';
 <?php if ($wrapGrid): ?><div class="product-grid"><?php endif ?>
 <?php foreach ($arResult['ITEMS'] as $item):
     $card = $item['CARD'];
-    $name = htmlspecialcharsbx($item['NAME']);
+    $name = htmlspecialcharsbx($item['~NAME'] ?? $item['NAME']);
     $url = htmlspecialcharsbx($item['DETAIL_PAGE_URL']);
 ?>
   <article class="card" data-id="<?= (int)$item['ID'] ?>">

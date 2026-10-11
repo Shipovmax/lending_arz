@@ -36,12 +36,12 @@ $searchQuery = (string)\Bitrix\Main\Application::getInstance()->getContext()->ge
 <header class="header" data-header>
   <div class="topbar">
     <div class="container topbar__inner">
-      <span class="topbar__place"><svg class="icon icon--sm"><use href="#i-pin"/></svg>Арзамас, <?= htmlspecialcharsbx($contacts['address']) ?> · <?= htmlspecialcharsbx($contacts['hours']) ?></span>
+      <span class="topbar__place"><svg class="icon icon--sm"><use href="#i-pin"/></svg><?= htmlspecialcharsbx(implode(' · ', array_filter(['Арзамас' . ($contacts['address'] !== '' ? ', ' . $contacts['address'] : ''), $contacts['hours']]))) ?></span>
       <nav class="topbar__links" aria-label="Информация">
         <a class="link-u" href="<?= SITE_DIR ?>info/#delivery">Доставка и оплата</a>
         <a class="link-u" href="<?= SITE_DIR ?>info/#return">Возврат и обмен</a>
         <a class="link-u" href="<?= SITE_DIR ?>info/#contacts">Контакты</a>
-        <?= \MirSport\link_or_text($contacts['phone'], $contacts['phone_href'], 'topbar__phone') ?>
+        <?php if ($contacts['phone'] !== ''): ?><?= \MirSport\link_or_text($contacts['phone'], $contacts['phone_href'], 'topbar__phone') ?><?php endif ?>
       </nav>
     </div>
   </div>
@@ -101,19 +101,18 @@ $searchQuery = (string)\Bitrix\Main\Application::getInstance()->getContext()->ge
     </nav>
   </div>
 
-  <?php /* TODO: build the nav, mega menu and mobile menu from catalog sections once the section tree is agreed. Static markup follows the prototype.
-     Items without a matching demo section lead to /catalog/ for now; the prototype's ?dir=fish and ?sale=1 map to catalog sections and the smart filter, and aria-current="page" is set once the targets differ. */ ?>
+  <?php
+  // Top navigation: the catalog's own sections (1C groups), so it never points to a section that does not exist.
+  require_once __DIR__ . '/include/showcase.php';
+  $navStore = require $_SERVER['DOCUMENT_ROOT'] . '/local/config/store.php';
+  $navSections = array_slice(\MirSport\catalog_sections($navStore['catalog_iblock_id'], 1), 0, 7);
+  ?>
   <nav class="nav" aria-label="Разделы каталога">
     <ul class="container nav__list">
-      <li><a class="nav__link" href="<?= SITE_DIR ?>catalog/?sort=new"<?= \MirSport\nav_current('' . SITE_DIR . 'catalog/?sort=new') ?> data-nav="new">Новинки</a></li>
-      <li><a class="nav__link" href="<?= SITE_DIR ?>catalog/"<?= \MirSport\nav_current('' . SITE_DIR . 'catalog/') ?> data-nav="men">Мужчинам</a></li>
-      <li><a class="nav__link" href="<?= SITE_DIR ?>catalog/"<?= \MirSport\nav_current('' . SITE_DIR . 'catalog/') ?> data-nav="women">Женщинам</a></li>
-      <li><a class="nav__link" href="<?= SITE_DIR ?>catalog/"<?= \MirSport\nav_current('' . SITE_DIR . 'catalog/') ?> data-nav="teen">Подросткам</a></li>
-      <li><a class="nav__link" href="<?= SITE_DIR ?>catalog/shoes/"<?= \MirSport\nav_current('' . SITE_DIR . 'catalog/shoes/') ?> data-nav="shoes">Обувь</a></li>
-      <li><a class="nav__link" href="<?= SITE_DIR ?>catalog/accessories/"<?= \MirSport\nav_current('' . SITE_DIR . 'catalog/accessories/') ?> data-nav="gear">Инвентарь</a></li>
-      <li><a class="nav__link" href="<?= SITE_DIR ?>catalog/"<?= \MirSport\nav_current('' . SITE_DIR . 'catalog/') ?> data-nav="fish">Рыбалка</a></li>
-      <li><a class="nav__link" href="<?= SITE_DIR ?>catalog/"<?= \MirSport\nav_current('' . SITE_DIR . 'catalog/') ?> data-nav="brands">Бренды</a></li>
-      <li><a class="nav__link nav__link--sale" href="<?= SITE_DIR ?>catalog/"<?= \MirSport\nav_current('' . SITE_DIR . 'catalog/') ?> data-nav="sale">Скидки</a></li>
+      <li><a class="nav__link" href="<?= SITE_DIR ?>catalog/?sort=new"<?= \MirSport\nav_current(SITE_DIR . 'catalog/?sort=new') ?>>Новинки</a></li>
+      <?php foreach ($navSections as $navSection): ?>
+      <li><a class="nav__link" href="<?= htmlspecialcharsbx($navSection['url']) ?>"<?= \MirSport\nav_current($navSection['url']) ?>><?= htmlspecialcharsbx($navSection['name']) ?></a></li>
+      <?php endforeach ?>
     </ul>
   </nav>
 

@@ -14,6 +14,7 @@ $contacts = \MirSport\contacts();
 
 // Category tiles come from the catalog itself (see include/showcase.php), so a 1C import updates them.
 $categoryTiles = \MirSport\section_tiles($store['catalog_iblock_id']);
+$homeBrands = \MirSport\brand_links($store['catalog_iblock_id'], $store['brand_props'], $store['hide_unavailable'] === 'Y', 12);
 ?>
 <div class="container page">
 
@@ -23,8 +24,8 @@ $categoryTiles = \MirSport\section_tiles($store['catalog_iblock_id']);
       <h1 class="hero__title">Спорттовары <span class="hero__title-tail">и всё для рыбалки</span></h1>
       <p class="hero__lead">Одежда, обувь и инвентарь для спорта, снасти и экипировка для рыбалки. Самовывоз из магазина или доставка СДЭК.</p>
       <div class="hero__actions">
-        <a class="btn btn--accent" href="<?= SITE_DIR ?>catalog/">Спорттовары</a>
-        <a class="btn btn--light" href="<?= SITE_DIR ?>catalog/">Рыбалка</a>
+        <a class="btn btn--accent" href="<?= SITE_DIR ?>catalog/">Смотреть каталог</a>
+        <a class="btn btn--light" href="<?= SITE_DIR ?>catalog/?sort=new">Новинки</a>
       </div>
     </div>
     <ul class="hero__facts" aria-label="Условия покупки">
@@ -45,16 +46,6 @@ $categoryTiles = \MirSport\section_tiles($store['catalog_iblock_id']);
       <a class="tile" href="<?= htmlspecialcharsbx($tile['url']) ?>"><span class="tile__photo photo"><?php if ($tile['photo'] !== ''): ?><img src="<?= htmlspecialcharsbx($tile['photo']) ?>" alt="" loading="lazy"><?php endif ?></span><span class="tile__name"><?= htmlspecialcharsbx($tile['name']) ?></span></a>
       <?php endforeach ?>
       <a class="tile tile--all" href="<?= SITE_DIR ?>catalog/"><span class="tile__photo"><span class="tile__all-text">Весь каталог</span><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></span></a>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="sections-title">
-    <h2 class="section__title" id="sections-title">Разделы</h2>
-    <div class="gateways">
-      <a class="gateway" href="<?= SITE_DIR ?>catalog/"><span class="gateway__name">Мужчинам</span><span class="gateway__kind">Мужская одежда и обувь</span><svg class="icon gateway__arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
-      <a class="gateway" href="<?= SITE_DIR ?>catalog/"><span class="gateway__name">Женщинам</span><span class="gateway__kind">Женская одежда и обувь</span><svg class="icon gateway__arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
-      <a class="gateway" href="<?= SITE_DIR ?>catalog/"><span class="gateway__name">Подросткам</span><span class="gateway__kind">Одежда и обувь для подростков</span><svg class="icon gateway__arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
-      <a class="gateway gateway--dark" href="<?= SITE_DIR ?>catalog/"><span class="gateway__name">Рыбалка</span><span class="gateway__kind">Снасти, приманки, экипировка</span><svg class="icon gateway__arrow" aria-hidden="true"><use href="#i-arrow"/></svg></a>
     </div>
   </section>
 
@@ -82,12 +73,12 @@ $categoryTiles = \MirSport\section_tiles($store['catalog_iblock_id']);
             'PRICE_CODE' => [$store['price_code']],
             'PRICE_VAT_INCLUDE' => 'Y',
             'OFFERS_FIELD_CODE' => ['NAME', 'PREVIEW_PICTURE', 'DETAIL_PICTURE'],
-            'OFFERS_PROPERTY_CODE' => ['SIZES_SHOES', 'SIZES_CLOTHES', 'COLOR_REF'],
+            'OFFERS_PROPERTY_CODE' => array_merge($store['size_props'], $store['color_props']),
             'OFFERS_LIMIT' => '0',
             'OFFERS_SORT_FIELD' => 'sort',
             'OFFERS_SORT_ORDER' => 'asc',
-            'HIDE_NOT_AVAILABLE' => 'N',
-            'HIDE_NOT_AVAILABLE_OFFERS' => 'N',
+            'HIDE_NOT_AVAILABLE' => $store['hide_unavailable'],
+            'HIDE_NOT_AVAILABLE_OFFERS' => $store['hide_unavailable'],
             'DETAIL_URL' => '/catalog/#SECTION_CODE#/#ELEMENT_CODE#/',
             'SECTION_URL' => '/catalog/#SECTION_CODE#/',
             'BASKET_URL' => '/personal/cart/',
@@ -116,27 +107,32 @@ $categoryTiles = \MirSport\section_tiles($store['catalog_iblock_id']);
       <h2 class="store__title" id="store-title">Магазин в Арзамасе</h2>
       <p class="store__caption">Магазин и пункт самовывоза. Заказ можно забрать в день оформления, если товар в наличии.</p>
       <div class="store__actions">
-        <a class="btn btn--primary" href="https://yandex.ru/maps/?text=<?= rawurlencode('Арзамас, ' . $contacts['address']) ?>" target="_blank" rel="noopener">Построить маршрут</a>
+        <a class="btn btn--primary" href="https://yandex.ru/maps/?text=<?= rawurlencode('Арзамас, ' . ($contacts['address'] !== '' ? $contacts['address'] : 'Мир спорта')) ?>" target="_blank" rel="noopener">Построить маршрут</a>
         <a class="btn" href="<?= SITE_DIR ?>info/#contacts">Все контакты</a>
       </div>
     </div>
+    <?php $storeRows = array_filter(['Адрес' => htmlspecialcharsbx($contacts['address']), 'Часы' => htmlspecialcharsbx($contacts['hours']), 'Телефон' => $contacts['phone'] !== '' ? \MirSport\link_or_text($contacts['phone'], $contacts['phone_href'], '') : '']); ?>
+    <?php if ($storeRows): ?>
     <dl class="def-list store__list">
-      <div><dt>Адрес</dt><dd><?= htmlspecialcharsbx($contacts['address']) ?></dd></div>
-      <div><dt>Часы</dt><dd><?= htmlspecialcharsbx($contacts['hours']) ?></dd></div>
-      <div><dt>Телефон</dt><dd><?= \MirSport\link_or_text($contacts['phone'], $contacts['phone_href'], '') ?></dd></div>
+      <?php foreach ($storeRows as $label => $value): ?>
+      <div><dt><?= $label ?></dt><dd><?= $value ?></dd></div>
+      <?php endforeach ?>
     </dl>
+    <?php endif ?>
   </section>
 
+  <?php if ($homeBrands): ?>
   <section class="section" aria-labelledby="brands-title">
     <div class="section__head">
       <h2 class="section__title" id="brands-title">Бренды</h2>
-      <a class="caps link-u" href="<?= SITE_DIR ?>catalog/">Все бренды</a>
     </div>
     <div class="brands">
-      <a class="brand" href="<?= SITE_DIR ?>catalog/">[Бренд 1]</a><a class="brand" href="<?= SITE_DIR ?>catalog/">[Бренд 2]</a><a class="brand" href="<?= SITE_DIR ?>catalog/">[Бренд 3]</a>
-      <a class="brand" href="<?= SITE_DIR ?>catalog/">[Бренд 4]</a><a class="brand" href="<?= SITE_DIR ?>catalog/">[Бренд 5]</a><a class="brand" href="<?= SITE_DIR ?>catalog/">[Бренд 6]</a>
+      <?php foreach ($homeBrands as $brand): ?>
+      <a class="brand" href="<?= htmlspecialcharsbx($brand['url']) ?>"><?= htmlspecialcharsbx($brand['name']) ?></a>
+      <?php endforeach ?>
     </div>
   </section>
+  <?php endif ?>
 
 </div>
 <?php require $_SERVER['DOCUMENT_ROOT'] . '/bitrix/footer.php'; ?>

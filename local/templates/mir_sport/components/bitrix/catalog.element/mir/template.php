@@ -15,7 +15,7 @@ use Bitrix\Main\Web\Json;
 $this->setFrameMode(true);
 
 $mir = $arResult['MIR'];
-$name = htmlspecialcharsbx($arResult['NAME']);
+$name = htmlspecialcharsbx($arResult['~NAME'] ?? $arResult['NAME']);
 $gallery = $mir['GALLERY'];
 $count = count($gallery);
 $colors = $mir['COLORS'];
@@ -73,7 +73,7 @@ $jsData = [
       <legend>Цвет: <strong data-color-name><?= htmlspecialcharsbx($colors[$defaultColor]['name'] ?? '') ?></strong></legend>
       <div class="swatches">
         <?php foreach ($colors as $xml => $color): ?>
-        <button class="swatch" type="button" aria-pressed="<?= $xml === $defaultColor ? 'true' : 'false' ?>" aria-label="<?= htmlspecialcharsbx($color['name']) ?>" data-color="<?= htmlspecialcharsbx($xml) ?>"><span<?= $color['pict'] !== '' ? ' style="background-image: url(\'' . htmlspecialcharsbx($color['pict']) . '\')"' : '' ?>></span></button>
+        <button class="swatch swatch--text" type="button" aria-pressed="<?= $xml === $defaultColor ? 'true' : 'false' ?>" data-color="<?= htmlspecialcharsbx($xml) ?>"><span><?= htmlspecialcharsbx($color['name']) ?></span></button>
         <?php endforeach ?>
       </div>
     </fieldset>
@@ -85,12 +85,8 @@ $jsData = [
       <div class="sizes">
         <?php foreach ($mir['SIZES'] as $size):
             $available = !empty($tree[$defaultColor][$size]); ?>
-        <button class="size" type="button" aria-pressed="false" data-size="<?= htmlspecialcharsbx($size) ?>"<?= $available ? '' : ' disabled aria-label="' . htmlspecialcharsbx($size) . ', нет в наличии"' ?>><?= htmlspecialcharsbx($size) ?></button>
+        <button class="size" type="button" aria-pressed="false" data-size="<?= htmlspecialcharsbx($size) ?>"<?= $available ? '' : ' disabled aria-label="' . htmlspecialcharsbx($mir['SIZE_LABELS'][$size] ?? $size) . ', нет в наличии"' ?>><?= htmlspecialcharsbx($mir['SIZE_LABELS'][$size] ?? $size) ?></button>
         <?php endforeach ?>
-      </div>
-      <div class="option__foot">
-        <span class="muted">Зачёркнутых размеров нет в наличии</span>
-        <a class="link-line" href="<?= SITE_DIR ?>info/#sizes">Таблица размеров</a>
       </div>
     </fieldset>
     <span class="err" role="alert" hidden data-size-error>Выберите размер</span>
@@ -113,11 +109,7 @@ $jsData = [
       <a class="link-line" href="<?= htmlspecialcharsbx($arParams['BASKET_URL']) ?>"><strong>Оформить заказ</strong></a>
     </div>
 
-    <div class="delivery">
-      <div class="delivery__row"><svg class="icon"><use href="#i-store"/></svg><span class="delivery__text"><span class="delivery__title">Самовывоз из магазина в Арзамасе</span><span class="muted">Сегодня, если товар в наличии</span></span><span class="delivery__price">Бесплатно</span></div>
-      <div class="delivery__row"><svg class="icon"><use href="#i-box"/></svg><span class="delivery__text"><span class="delivery__title">Пункт выдачи СДЭК</span><span class="muted">Срок и стоимость — при оформлении</span></span><span class="delivery__price">от [цена] ₽</span></div>
-      <div class="delivery__row"><svg class="icon"><use href="#i-truck"/></svg><span class="delivery__text"><span class="delivery__title">Курьер СДЭК</span><span class="muted">До двери, срок — при оформлении</span></span><span class="delivery__price">от [цена] ₽</span></div>
-    </div>
+    <p class="stock<?= $mir['CAN_BUY'] ? '' : ' stock--out' ?>" role="status" data-stock><?= $mir['CAN_BUY'] ? 'В наличии' : 'Нет в наличии' ?></p>
   </div>
 </section>
 

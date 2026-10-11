@@ -20,7 +20,9 @@ function contacts(): array
 
     $read = static function (string $name): string {
         $file = new File(__DIR__ . '/' . $name . '.txt');
-        return $file->isExists() ? trim(strip_tags($file->getContents())) : '';
+        $value = $file->isExists() ? trim(strip_tags($file->getContents())) : '';
+        // "[...]" marks a value that is not filled in yet: treat it as empty so the site hides it.
+        return str_contains($value, '[') ? '' : $value;
     };
 
     $phone = $read('phone');

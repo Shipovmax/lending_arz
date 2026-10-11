@@ -112,6 +112,14 @@
         b.setAttribute('aria-pressed', String(state.size === size));
       });
     }
+    var stockEl = $('[data-stock]');
+    function refreshStock() {
+      if (!stockEl || !offers.length) return;
+      var exact = state.size ? offerFor(state.color, state.size) : null;
+      var ok = exact ? exact.canBuy : offers.some(function (o) { return (!state.color || o.color === state.color) && o.canBuy; });
+      stockEl.textContent = ok ? 'В наличии' : 'Нет в наличии';
+      stockEl.classList.toggle('stock--out', !ok);
+    }
     function refreshPrice() {
       var exact = offerFor(state.color, state.size);
       if (exact) { setPrice(exact, false); return; }
@@ -128,6 +136,7 @@
         if (data.colors[state.color]) setGallery(data.colors[state.color].photos);
         refreshSizes();
         refreshPrice();
+        refreshStock();
       });
     });
     $$('[data-size]').forEach(function (b) {
@@ -136,6 +145,7 @@
         if (sizeError) sizeError.hidden = true;
         refreshSizes();
         refreshPrice();
+        refreshStock();
       });
     });
 

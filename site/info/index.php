@@ -6,6 +6,8 @@ $APPLICATION->SetPageProperty('title', 'Покупателям — достав�
 $APPLICATION->SetPageProperty('description', 'Как оформить заказ, доставка СДЭК и самовывоз в Арзамасе, оплата, возврат и обмен, таблица размеров, контакты и реквизиты.');
 // The page prints its own h1 (from the prototype).
 $APPLICATION->SetPageProperty('hide_h1', 'Y');
+require_once $_SERVER['DOCUMENT_ROOT'] . SITE_TEMPLATE_PATH . '/include/contacts.php';
+$contacts = \MirSport\contacts();
 ?>
 <div class="container page page--tight">
   <nav aria-label="Хлебные крошки">
@@ -21,7 +23,7 @@ $APPLICATION->SetPageProperty('hide_h1', 'Y');
       <a href="#return" data-info-link>Возврат и обмен <span aria-hidden="true">→</span></a>
       <a href="#sizes" data-info-link>Таблица размеров <span aria-hidden="true">→</span></a>
       <a href="#contacts" data-info-link>Контакты <span aria-hidden="true">→</span></a>
-      <a href="#requisites" data-info-link>Реквизиты <span aria-hidden="true">→</span></a>
+      <?php if ($contacts['legal'] !== ''): ?><a href="#requisites" data-info-link>Реквизиты <span aria-hidden="true">→</span></a><?php endif ?>
     </nav>
 
     <article class="doc">
@@ -38,7 +40,7 @@ $APPLICATION->SetPageProperty('hide_h1', 'Y');
       <section id="delivery" data-info-section>
         <h2 class="page-title">Доставка</h2>
         <dl class="def-list">
-          <div><dt><strong style="color: var(--c-ink)">Самовывоз из магазина</strong><br>Арзамас, [адрес магазина]. Если товар в наличии, заказ можно забрать в день оформления. Храним заказ [N] дней.</dt><dd>Бесплатно</dd></div>
+          <div><dt><strong style="color: var(--c-ink)">Самовывоз из магазина</strong><br>Арзамас<?= $contacts['address'] !== '' ? ', ' . htmlspecialcharsbx($contacts['address']) : '' ?>. Если товар в наличии, заказ можно забрать в день оформления.</dt><dd>Бесплатно</dd></div>
           <div><dt><strong style="color: var(--c-ink)">Пункт выдачи СДЭК</strong><br>В любой город России. Стоимость и срок рассчитываются автоматически при оформлении.</dt><dd>По тарифу СДЭК</dd></div>
           <div><dt><strong style="color: var(--c-ink)">Курьер СДЭК</strong><br>Доставка до двери. Курьер позвонит заранее и согласует время.</dt><dd>По тарифу СДЭК</dd></div>
         </dl>
@@ -48,9 +50,9 @@ $APPLICATION->SetPageProperty('hide_h1', 'Y');
       <section id="payment" data-info-section>
         <h2 class="page-title">Оплата</h2>
         <h3>Онлайн на сайте</h3>
-        <p>Банковской картой МИР, Visa, Mastercard или через СБП. Оплата проходит на защищённой странице платёжного сервиса [название].</p>
+        <p>Банковской картой МИР, Visa, Mastercard или через СБП. Оплата проходит на защищённой странице платёжного сервиса.</p>
         <h3>При получении в СДЭК</h3>
-        <p>Картой или наличными в пункте выдачи или курьеру. СДЭК может взять комиссию за наложенный платёж: [уточнить условия].</p>
+        <p>Картой или наличными в пункте выдачи или курьеру. СДЭК может взять комиссию за наложенный платёж.</p>
         <h3>В магазине</h3>
         <p>При самовывозе — картой, через СБП или наличными.</p>
         <p class="muted small">Кассовый чек отправим на телефон или электронную почту, указанные при заказе.</p>
@@ -65,8 +67,7 @@ $APPLICATION->SetPageProperty('hide_h1', 'Y');
         <h3>Если нашли брак</h3>
         <p>Напишите или позвоните нам с номером заказа и фото. Заменим товар или вернём деньги по закону о защите прав потребителей.</p>
         <h3>Как оформить возврат</h3>
-        <p>Заполните заявление в магазине или пришлите его на [email]. Отправить товар можно через СДЭК по адресу: [адрес для возвратов].</p>
-        <a class="btn" href="#" aria-label="Скачать заявление на возврат (файл даст заказчик)">Скачать заявление на возврат</a>
+        <p>Заполните заявление в магазине<?= $contacts['email_href'] !== '' ? ' или пришлите его на <a class="link-line" href="' . htmlspecialcharsbx($contacts['email_href']) . '">' . htmlspecialcharsbx($contacts['email']) . '</a>' : '' ?>. Отправить товар можно через СДЭК, адрес для отправки подскажем.</p>
       </section>
 
       <section id="sizes" data-info-section>
@@ -94,32 +95,25 @@ $APPLICATION->SetPageProperty('hide_h1', 'Y');
       <section id="contacts" data-info-section>
         <h2 class="page-title">Контакты</h2>
         <dl class="def-list">
-          <div><dt>Адрес магазина</dt><dd>Арзамас, [улица, дом]</dd></div>
-          <div><dt>Часы работы</dt><dd>[ежедневно, 9:00–20:00]</dd></div>
-          <div><dt>Телефон</dt><dd><a href="tel:+7XXXXXXXXXX">[+7 (___) ___-__-__]</a></dd></div>
-          <div><dt>Электронная почта</dt><dd><a href="mailto:email@domain.ru">[email@домен.ru]</a></dd></div>
-          <div><dt>Мессенджеры</dt><dd>[Telegram, WhatsApp или MAX]</dd></div>
+          <div><dt>Адрес магазина</dt><dd>Арзамас<?= $contacts['address'] !== '' ? ', ' . htmlspecialcharsbx($contacts['address']) : '' ?></dd></div>
+          <?php if ($contacts['hours'] !== ''): ?><div><dt>Часы работы</dt><dd><?= htmlspecialcharsbx($contacts['hours']) ?></dd></div><?php endif ?>
+          <?php if ($contacts['phone'] !== ''): ?><div><dt>Телефон</dt><dd><?= \MirSport\link_or_text($contacts['phone'], $contacts['phone_href'], '') ?></dd></div><?php endif ?>
+          <?php if ($contacts['email'] !== ''): ?><div><dt>Электронная почта</dt><dd><?= \MirSport\link_or_text($contacts['email'], $contacts['email_href'], '') ?></dd></div><?php endif ?>
         </dl>
-                <div class="map photo photo--alt">Карта (Яндекс Карты)</div>
+        <a class="btn" href="https://yandex.ru/maps/?text=<?= rawurlencode('Арзамас, ' . ($contacts['address'] !== '' ? $contacts['address'] : 'Мир спорта')) ?>" target="_blank" rel="noopener">Открыть на карте</a>
       </section>
 
+      <?php if ($contacts['legal'] !== ''): ?>
       <section id="requisites" data-info-section>
         <h2 class="page-title">Реквизиты</h2>
-        <dl class="def-list">
-          <div><dt>Продавец</dt><dd>[ООО / ИП Название]</dd></div>
-          <div><dt>ИНН</dt><dd>[__________]</dd></div>
-          <div><dt>ОГРН / ОГРНИП</dt><dd>[_____________]</dd></div>
-          <div><dt>Юридический адрес</dt><dd>[адрес]</dd></div>
-          <div><dt>Банк</dt><dd>[название банка, БИК]</dd></div>
-          <div><dt>Расчётный счёт</dt><dd>[р/с]</dd></div>
-        </dl>
-        <p class="muted small">Публичная оферта: [ссылка на текст оферты — готовит юрист заказчика].</p>
+        <p><?= nl2br(htmlspecialcharsbx($contacts['legal'])) ?></p>
       </section>
+      <?php endif ?>
 
       <div class="help">
-        <span class="help__text">Остались вопросы? Ответим по телефону или в мессенджере.</span>
-        <a class="btn btn--primary" href="tel:+7XXXXXXXXXX">Позвонить</a>
-        <a class="btn" href="mailto:email@domain.ru">Написать</a>
+        <span class="help__text">Остались вопросы? Ответим по телефону, почте или в магазине.</span>
+        <?php if ($contacts['phone_href'] !== ''): ?><a class="btn btn--primary" href="<?= htmlspecialcharsbx($contacts['phone_href']) ?>">Позвонить</a><?php endif ?>
+        <?php if ($contacts['email_href'] !== ''): ?><a class="btn" href="<?= htmlspecialcharsbx($contacts['email_href']) ?>">Написать</a><?php endif ?>
       </div>
     </article>
   </div>

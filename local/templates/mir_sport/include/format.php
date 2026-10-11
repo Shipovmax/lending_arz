@@ -35,3 +35,30 @@ function image(array|int|null $file, int $width, int $height): string
     $resized = \CFile::ResizeImageGet($id, ['width' => $width, 'height' => $height], BX_RESIZE_IMAGE_PROPORTIONAL, true);
     return is_array($resized) ? (string)$resized['src'] : '';
 }
+
+/**
+ * Display labels for size values: [value => label]. When every value starts with the same word ("рама 15", "рама 16"),
+ * the word is dropped, because the group title already says it ("Размер рамы"). Sorted naturally: 10,5 < 14 < 14,5.
+ */
+function size_labels(array $values): array
+{
+    $values = array_values(array_unique(array_map('strval', $values)));
+    $labels = array_combine($values, $values) ?: [];
+    $strip = $values !== [];
+    $first = null;
+    foreach ($values as $value) {
+        $parts = preg_split('/\s+/u', trim($value), 2);
+        if (count($parts) < 2 || $parts[1] === '' || ($first !== null && mb_strtolower($parts[0]) !== $first)) {
+            $strip = false;
+            break;
+        }
+        $first = mb_strtolower($parts[0]);
+    }
+    if ($strip) {
+        foreach ($values as $value) {
+            $labels[$value] = (string)preg_split('/\s+/u', trim($value), 2)[1];
+        }
+    }
+    uasort($labels, static fn(string $a, string $b): int => strnatcasecmp($a, $b));
+    return $labels;
+}

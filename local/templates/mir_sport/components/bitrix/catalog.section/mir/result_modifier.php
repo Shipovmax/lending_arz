@@ -11,9 +11,11 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) {
  */
 require_once $_SERVER['DOCUMENT_ROOT'] . SITE_TEMPLATE_PATH . '/include/format.php';
 
-use function MirSport\{image, plural, rub};
+use function MirSport\{image, plural, rub, size_labels};
 
-$sizeProps = ['SIZES_SHOES', 'SIZES_CLOTHES'];
+$store = require $_SERVER['DOCUMENT_ROOT'] . '/local/config/store.php';
+$sizeProps = $store['size_props'];
+$colorProps = $store['color_props'];
 
 foreach ($arResult['ITEMS'] as $key => $item) {
     $rows = [];
@@ -24,7 +26,7 @@ foreach ($arResult['ITEMS'] as $key => $item) {
     if ($offers) {
         foreach ($offers as $offer) {
             $price = $offer['ITEM_PRICES'][$offer['ITEM_PRICE_SELECTED'] ?? 0] ?? null;
-            if ($price) {
+            if ($price && (float)$price['RATIO_PRICE'] > 0) {
                 $rows[] = $price;
             }
             foreach ($sizeProps as $code) {
@@ -33,12 +35,15 @@ foreach ($arResult['ITEMS'] as $key => $item) {
                     $sizes[(string)$value] = (int)($offer['PROPERTIES'][$code]['VALUE_SORT'] ?? 0);
                 }
             }
-            $color = $offer['PROPERTIES']['COLOR_REF']['VALUE'] ?? '';
-            if ($color !== '') {
-                $colors[$color] = true;
+            foreach ($colorProps as $code) {
+                $color = trim((string)($offer['PROPERTIES'][$code]['VALUE'] ?? ''));
+                if ($color !== '') {
+                    $colors[$color] = true;
+                    break;
+                }
             }
         }
-    } elseif (!empty($item['ITEM_PRICES'])) {
+    } elseif (!empty($item['ITEM_PRICES']) && (float)$item['ITEM_PRICES'][$item['ITEM_PRICE_SELECTED'] ?? 0]['RATIO_PRICE'] > 0) {
         $rows[] = $item['ITEM_PRICES'][$item['ITEM_PRICE_SELECTED'] ?? 0];
     }
 
@@ -51,8 +56,8 @@ foreach ($arResult['ITEMS'] as $key => $item) {
 
     $meta = [];
     if ($sizes) {
-        asort($sizes);
-        $names = array_keys($sizes);
+        $labels = \MirSport\size_labels(array_keys($sizes));
+        $names = array_values($labels);
         $first = reset($names);
         $last = end($names);
         $meta[] = count($names) > 1 ? 'Размеры ' . $first . '–' . $last : 'Размер ' . $first;
@@ -61,10 +66,11 @@ foreach ($arResult['ITEMS'] as $key => $item) {
         $meta[] = count($colors) . ' ' . plural(count($colors), 'цвет', 'цвета', 'цветов');
     }
 
-    $picture = $item['PREVIEW_PICTURE'] ?: $item['DETAIL_PICTURE'] ?: null;
+    // The detail picture first: the 1C import makes the preview a small thumbnail (about 100 px wide).
+    $picture = $item['DETAIL_PICTURE'] ?: $item['PREVIEW_PICTURE'] ?: null;
     if (!$picture && $offers) {
         foreach ($offers as $offer) {
-            $picture = $offer['PREVIEW_PICTURE'] ?: $offer['DETAIL_PICTURE'] ?: null;
+            $picture = $offer['DETAIL_PICTURE'] ?: $offer['PREVIEW_PICTURE'] ?: null;
             if ($picture) {
                 break;
             }

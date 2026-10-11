@@ -1,13 +1,18 @@
 <?
 require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php");
 $store = require $_SERVER['DOCUMENT_ROOT'] . '/local/config/store.php';
+require_once $_SERVER['DOCUMENT_ROOT'] . SITE_TEMPLATE_PATH . '/include/showcase.php';
 $APPLICATION->SetTitle("Каталог");
+// Property codes come from local/config/store.php: sizes and colors of the offers, article, brand.
+$optionProps = array_merge($store['size_props'], $store['color_props']);
+$detailProps = \MirSport\catalog_property_codes($store['catalog_iblock_id']);
 ?>
 <?$APPLICATION->IncludeComponent("bitrix:catalog", "mir", array(
 	"IBLOCK_TYPE" => "catalog",
 	"IBLOCK_ID" => $store['catalog_iblock_id'],
 	"TEMPLATE_THEME" => "site",
-	"HIDE_NOT_AVAILABLE" => "N",
+	"HIDE_NOT_AVAILABLE" => $store['hide_unavailable'],
+	"HIDE_NOT_AVAILABLE_OFFERS" => $store['hide_unavailable'],
 	"BASKET_URL" => "/personal/cart/",
 	"ACTION_VARIABLE" => "action",
 	"PRODUCT_ID_VARIABLE" => "id",
@@ -49,11 +54,7 @@ $APPLICATION->SetTitle("Каталог");
 	"USE_PRODUCT_QUANTITY" => "Y",
 	"CONVERT_CURRENCY" => "N",
 	"QUANTITY_FLOAT" => "N",
-	"OFFERS_CART_PROPERTIES" => array(
-		0 => "SIZES_SHOES",
-		1 => "SIZES_CLOTHES",
-		2 => "COLOR_REF",
-	),
+	"OFFERS_CART_PROPERTIES" => $optionProps,
 	"SHOW_TOP_ELEMENTS" => "N",
 	"SECTION_COUNT_ELEMENTS" => "N",
 	"SECTION_TOP_DEPTH" => "1",
@@ -65,12 +66,7 @@ $APPLICATION->SetTitle("Каталог");
 	"ELEMENT_SORT_ORDER" => "asc",
 	"ELEMENT_SORT_FIELD2" => "id",
 	"ELEMENT_SORT_ORDER2" => "desc",
-	"LIST_PROPERTY_CODE" => array(
-		0 => "NEWPRODUCT",
-		1 => "SALELEADER",
-		2 => "SPECIALOFFER",
-		3 => "",
-	),
+	"LIST_PROPERTY_CODE" => array(),
 	"INCLUDE_SUBSECTIONS" => "Y",
 	"LIST_META_KEYWORDS" => "UF_KEYWORDS",
 	"LIST_META_DESCRIPTION" => "UF_META_DESCRIPTION",
@@ -81,21 +77,10 @@ $APPLICATION->SetTitle("Каталог");
 		2 => "DETAIL_PICTURE",
 		3 => "",
 	),
-	"LIST_OFFERS_PROPERTY_CODE" => array(
-		0 => "SIZES_SHOES",
-		1 => "SIZES_CLOTHES",
-		2 => "COLOR_REF",
-		3 => "MORE_PHOTO",
-		4 => "ARTNUMBER",
-		5 => "",
-	),
+	"LIST_OFFERS_PROPERTY_CODE" => array_merge($optionProps, ["MORE_PHOTO"], $store['article_props']),
 	"LIST_OFFERS_LIMIT" => "0",
 	"SECTION_BACKGROUND_IMAGE" => "UF_BACKGROUND_IMAGE",
-	"DETAIL_PROPERTY_CODE" => array(
-		0 => "NEWPRODUCT",
-		1 => "MANUFACTURER",
-		2 => "MATERIAL",
-	),
+	"DETAIL_PROPERTY_CODE" => $detailProps,
 	"DETAIL_META_KEYWORDS" => "KEYWORDS",
 	"DETAIL_META_DESCRIPTION" => "META_DESCRIPTION",
 	"DETAIL_BROWSER_TITLE" => "TITLE",
@@ -103,14 +88,7 @@ $APPLICATION->SetTitle("Каталог");
 		0 => "NAME",
 		1 => "",
 	),
-	"DETAIL_OFFERS_PROPERTY_CODE" => array(
-		0 => "ARTNUMBER",
-		1 => "SIZES_SHOES",
-		2 => "SIZES_CLOTHES",
-		3 => "COLOR_REF",
-		4 => "MORE_PHOTO",
-		5 => "",
-	),
+	"DETAIL_OFFERS_PROPERTY_CODE" => array_merge($optionProps, ["MORE_PHOTO"], $store['article_props']),
 	"DETAIL_BACKGROUND_IMAGE" => "BACKGROUND_IMAGE",
 	"LINK_IBLOCK_TYPE" => "",
 	"LINK_IBLOCK_ID" => "",
@@ -137,12 +115,7 @@ $APPLICATION->SetTitle("Каталог");
 	),
 	"PRODUCT_DISPLAY_MODE" => "Y",
 	"OFFER_ADD_PICT_PROP" => "MORE_PHOTO",
-	"OFFER_TREE_PROPS" => array(
-		0 => "SIZES_SHOES",
-		1 => "SIZES_CLOTHES",
-		2 => "COLOR_REF",
-		3 => "",
-	),
+	"OFFER_TREE_PROPS" => $optionProps,
 	"SHOW_DISCOUNT_PERCENT" => "Y",
 	"SHOW_OLD_PRICE" => "Y",
 	"MESS_BTN_BUY" => "Купить",
@@ -168,7 +141,7 @@ $APPLICATION->SetTitle("Каталог");
 	"MAIN_TITLE" => "Наличие на складах",
 	"MIN_AMOUNT" => "10",
 	"DETAIL_BRAND_USE" => "Y",
-	"DETAIL_BRAND_PROP_CODE" => "BRAND_REF",
+	"DETAIL_BRAND_PROP_CODE" => $store['brand_props'][0] ?? "",
 	"COMPATIBLE_MODE" => "N",
 	"SIDEBAR_SECTION_SHOW" => "Y",
 	"SIDEBAR_DETAIL_SHOW" => "Y",

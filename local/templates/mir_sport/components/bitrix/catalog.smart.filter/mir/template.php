@@ -12,6 +12,11 @@ if (!defined('B_PROLOG_INCLUDED') || B_PROLOG_INCLUDED !== true) {
  */
 $this->setFrameMode(true);
 
+// Which properties are sizes and colors is configured in local/config/store.php.
+$store = require $_SERVER['DOCUMENT_ROOT'] . '/local/config/store.php';
+$isSize = static fn(array $item): bool => in_array((string)$item['CODE'], $store['size_props'], true);
+$isColor = static fn(array $item): bool => in_array((string)$item['CODE'], $store['color_props'], true);
+
 $items = [];
 foreach ($arResult['ITEMS'] as $item) {
     if (!empty($item['PRICE'])) {
@@ -25,14 +30,14 @@ foreach ($arResult['ITEMS'] as $item) {
     }
 }
 // Order as in the prototype: price, size, color, then the rest.
-$rank = static function (array $item): int {
+$rank = static function (array $item) use ($isSize, $isColor): int {
     if (!empty($item['PRICE'])) {
         return 0;
     }
-    if (str_starts_with((string)$item['CODE'], 'SIZES_')) {
+    if ($isSize($item)) {
         return 1;
     }
-    return $item['CODE'] === 'COLOR_REF' ? 2 : 3;
+    return $isColor($item) ? 2 : 3;
 };
 usort($items, static fn(array $a, array $b): int => $rank($a) <=> $rank($b));
 $isActive = false;
@@ -43,7 +48,6 @@ foreach ($arResult['ITEMS'] as $item) {
         }
     }
 }
-$isSize = static fn(array $item): bool => str_starts_with((string)$item['CODE'], 'SIZES_');
 ?>
 <form name="<?= htmlspecialcharsbx($arResult['FILTER_NAME']) ?>_form" action="<?= htmlspecialcharsbx($arParams['MIR_RESET_URL']) ?>" method="get" data-smart-filter>
   <?php foreach (($arParams['MIR_KEEP'] ?? []) as $name => $value): if ($value === null) { continue; } ?>
@@ -62,13 +66,16 @@ $isSize = static fn(array $item): bool => str_starts_with((string)$item['CODE'],
       <input class="input" type="number" inputmode="numeric" name="<?= htmlspecialcharsbx($max['CONTROL_NAME']) ?>" value="<?= htmlspecialcharsbx($max['HTML_VALUE']) ?>" aria-label="Цена до" placeholder="до <?= (int)ceil($max['VALUE']) ?>">
     </div>
   </fieldset>
-  <?php elseif ($isSize($item)): ?>
+  <?php elseif ($isSize($item)):
+      require_once $_SERVER['DOCUMENT_ROOT'] . SITE_TEMPLATE_PATH . '/include/format.php';
+      $labels = \MirSport\size_labels(array_map(static fn($v) => htmlspecialchars_decode((string)$v['VALUE']), $item['VALUES']));
+      usort($item['VALUES'], static fn($a, $b) => strnatcasecmp($labels[htmlspecialchars_decode((string)$a['VALUE'])] ?? '', $labels[htmlspecialchars_decode((string)$b['VALUE'])] ?? '')); ?>
   <fieldset class="fgroup">
     <legend><?= htmlspecialcharsbx(htmlspecialchars_decode((string)$item['NAME'])) ?></legend>
     <div class="size-grid">
       <?php foreach ($item['VALUES'] as $value): ?>
       <label class="pill">
-        <input class="visually-hidden" type="checkbox" name="<?= htmlspecialcharsbx($value['CONTROL_NAME']) ?>" value="<?= htmlspecialcharsbx($value['HTML_VALUE']) ?>"<?= !empty($value['CHECKED']) ? ' checked' : '' ?><?= !empty($value['DISABLED']) && empty($value['CHECKED']) ? ' disabled' : '' ?>><?= htmlspecialcharsbx(htmlspecialchars_decode((string)$value['VALUE'])) ?>
+        <input class="visually-hidden" type="checkbox" name="<?= htmlspecialcharsbx($value['CONTROL_NAME']) ?>" value="<?= htmlspecialcharsbx($value['HTML_VALUE']) ?>"<?= !empty($value['CHECKED']) ? ' checked' : '' ?><?= !empty($value['DISABLED']) && empty($value['CHECKED']) ? ' disabled' : '' ?>><?php $raw = htmlspecialchars_decode((string)$value['VALUE']); ?><?= htmlspecialcharsbx($labels[$raw] ?? $raw) ?>
       </label>
       <?php endforeach ?>
     </div>
