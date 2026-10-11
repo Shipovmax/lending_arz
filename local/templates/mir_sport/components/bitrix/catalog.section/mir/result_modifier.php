@@ -86,7 +86,7 @@ foreach ($arResult['ITEMS'] as $key => $item) {
         'META' => implode(' · ', $meta),
         'AVAILABLE' => !empty($item['CAN_BUY']) || ($item['PRODUCT']['AVAILABLE'] ?? 'N') === 'Y',
         'HAS_OFFERS' => (bool)$offers,
-        'PHOTO' => image($picture, 460, 614),
+        'PHOTO' => image($picture, 720, 960),
     ];
 }
 

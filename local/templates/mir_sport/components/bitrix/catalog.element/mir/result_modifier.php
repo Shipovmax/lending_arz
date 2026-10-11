@@ -20,7 +20,8 @@ use function MirSport\{image, rub, size_labels};
 $store = require $_SERVER['DOCUMENT_ROOT'] . '/local/config/store.php';
 $sizeProps = $store['size_props'];
 $colorProps = $store['color_props'];
-$photoMain = [720, 960];
+// Twice the gallery's size, so photos stay sharp on high-density screens.
+$photoMain = [1200, 1600];
 $photoThumb = [152, 203];
 
 $photos = static function (array $element) use ($photoMain, $photoThumb): array {
