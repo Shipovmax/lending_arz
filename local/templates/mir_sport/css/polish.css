@@ -116,6 +116,21 @@
 .buybox__top { align-items: flex-start; }
 .buybox__top .small { flex: none; white-space: nowrap; }
 
+/* Bottom buy bar (phones only): price and button while the main button is below the fold */
+.buybar { display: none; }
+@media (max-width: 767px) {
+  .buybar:not([hidden]) {
+    display: flex; align-items: center; gap: var(--sp-4);
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: var(--z-header);
+    padding: var(--sp-3) var(--gutter); background: var(--c-bg); border-top: 1px solid var(--c-line);
+  }
+  .buybar__price { font-size: var(--fs-20); font-weight: 600; white-space: nowrap; }
+  .buybar__btn { flex: 1 1 auto; }
+  /* The current page is the title right below: its long name only wraps the breadcrumbs onto a second line */
+  .breadcrumbs li[aria-current="page"] { display: none; }
+  .breadcrumbs li:nth-last-child(2)::after { content: none; }
+}
+
 /* A color without a photo is shown as a text button instead of an empty square */
 .swatch--text { width: auto; min-width: var(--control-h); min-height: var(--control-h); aspect-ratio: auto; padding: 0 var(--sp-3); font-size: var(--fs-14); }
 .swatch--text span { display: flex; align-items: center; justify-content: center; height: 100%; border: none; white-space: nowrap; }

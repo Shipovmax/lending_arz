@@ -98,6 +98,7 @@
     function setPrice(offer, from) {
       if (!offer || !priceEl) return;
       priceEl.textContent = (from ? 'от ' : '') + offer.price.replace(/&nbsp;/g, ' ');
+      syncBar();
       oldWrap.hidden = !offer.old;
       if (offer.old) oldValue.textContent = offer.old;
     }
@@ -158,6 +159,23 @@
         refreshStock();
       });
     });
+
+    /* Bottom bar on phones: price and buy button while the main button is off screen */
+    var bar = $('[data-buybar]');
+    var barBtn = $('[data-buybar-btn]');
+    var mainBtn = $('[data-add-to-cart]');
+    if (bar && barBtn && mainBtn && 'IntersectionObserver' in window) {
+      barBtn.addEventListener('click', function () { mainBtn.click(); });
+      new IntersectionObserver(function (entries) {
+        var e = entries[0];
+        // Shown only while the main button is below the screen (not after the user scrolled past it).
+        bar.hidden = e.isIntersecting || e.boundingClientRect.top < 0;
+      }).observe(mainBtn);
+    }
+    function syncBar() {
+      var barPrice = $('[data-buybar-price]');
+      if (barPrice && priceEl) barPrice.textContent = priceEl.textContent;
+    }
 
     /* Add to cart */
     var addBtn = $('[data-add-to-cart]');

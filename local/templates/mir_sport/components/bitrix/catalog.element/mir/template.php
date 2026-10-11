@@ -103,6 +103,12 @@ $jsData = [
       <button class="fav-btn" type="button" aria-pressed="false" aria-label="Добавить в избранное" data-fav><svg class="icon"><use href="#i-heart"/></svg></button>
     </div>
     <?php endif ?>
+    <?php if ($mir['CAN_BUY']): ?>
+    <div class="buybar" hidden data-buybar>
+      <span class="buybar__price" data-buybar-price><?= $mir['PRICE_FROM'] ? 'от ' : '' ?><?= $mir['PRICE'] ?></span>
+      <button class="btn btn--primary buybar__btn" type="button" data-buybar-btn>Добавить в корзину</button>
+    </div>
+    <?php endif ?>
     <span class="err" role="alert" hidden data-add-error>Не получилось добавить товар. Попробуйте ещё раз.</span>
     <div class="notice" role="status" hidden data-added>
       <span>Добавили в корзину<span data-added-size></span></span>
