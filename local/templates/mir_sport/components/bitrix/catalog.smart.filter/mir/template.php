@@ -39,7 +39,24 @@ $rank = static function (array $item) use ($isSize, $isColor): int {
     }
     return $isColor($item) ? 2 : 3;
 };
+// One "Размер" block: the sizes come from several properties (1C's own and the one taken from names).
+$mergedSize = null;
+foreach ($items as $k => $item) {
+    if (empty($item['PRICE']) && $isSize($item)) {
+        if ($mergedSize === null) {
+            $mergedSize = $k;
+        } else {
+            $items[$mergedSize]['VALUES'] = array_merge($items[$mergedSize]['VALUES'], $item['VALUES']);
+            unset($items[$k]);
+        }
+    }
+}
+if ($mergedSize !== null && count(array_filter($items, static fn($i) => empty($i['PRICE']) && $isSize($i))) === 1) {
+    $items[$mergedSize]['NAME'] = 'Размер';
+}
 usort($items, static fn(array $a, array $b): int => $rank($a) <=> $rank($b));
+// Long lists are folded: the first values stay visible, the rest opens with "Показать ещё".
+$visibleLimit = 8;
 $isActive = false;
 foreach ($arResult['ITEMS'] as $item) {
     foreach ($item['VALUES'] as $value) {
@@ -72,27 +89,31 @@ foreach ($arResult['ITEMS'] as $item) {
       usort($item['VALUES'], static fn($a, $b) => strnatcasecmp($labels[htmlspecialchars_decode((string)$a['VALUE'])] ?? '', $labels[htmlspecialchars_decode((string)$b['VALUE'])] ?? '')); ?>
   <fieldset class="fgroup">
     <legend><?= htmlspecialcharsbx(htmlspecialchars_decode((string)$item['NAME'])) ?></legend>
+    <?php $folded = count($item['VALUES']) > $visibleLimit && !array_filter($item['VALUES'], static fn($v) => !empty($v['CHECKED'])); ?>
     <div class="size-grid">
-      <?php foreach ($item['VALUES'] as $value): ?>
-      <label class="pill">
+      <?php foreach ($item['VALUES'] as $n => $value): ?>
+      <label class="pill"<?= $folded && $n >= $visibleLimit ? ' hidden data-more' : '' ?>>
         <input class="visually-hidden" type="checkbox" name="<?= htmlspecialcharsbx($value['CONTROL_NAME']) ?>" value="<?= htmlspecialcharsbx($value['HTML_VALUE']) ?>"<?= !empty($value['CHECKED']) ? ' checked' : '' ?><?= !empty($value['DISABLED']) && empty($value['CHECKED']) ? ' disabled' : '' ?>><?php $raw = htmlspecialchars_decode((string)$value['VALUE']); ?><?= htmlspecialcharsbx($labels[$raw] ?? $raw) ?>
       </label>
       <?php endforeach ?>
     </div>
+    <?php if ($folded): ?><button class="more-btn" type="button" data-more-toggle>Показать ещё <?= count($item['VALUES']) - $visibleLimit ?></button><?php endif ?>
   </fieldset>
   <?php else: ?>
   <fieldset class="fgroup">
     <legend><?= htmlspecialcharsbx(htmlspecialchars_decode((string)$item['NAME'])) ?></legend>
-    <?php foreach ($item['VALUES'] as $value):
+    <?php $folded = count($item['VALUES']) > $visibleLimit && !array_filter($item['VALUES'], static fn($v) => !empty($v['CHECKED'])); ?>
+    <?php foreach (array_values($item['VALUES']) as $n => $value):
         $disabled = !empty($value['DISABLED']) && empty($value['CHECKED']);
         $file = $value['FILE']['SRC'] ?? ''; ?>
-    <label class="check">
+    <label class="check"<?= $folded && $n >= $visibleLimit ? ' hidden data-more' : '' ?>>
       <input type="checkbox" name="<?= htmlspecialcharsbx($value['CONTROL_NAME']) ?>" value="<?= htmlspecialcharsbx($value['HTML_VALUE']) ?>"<?= !empty($value['CHECKED']) ? ' checked' : '' ?><?= $disabled ? ' disabled' : '' ?>>
       <?php if ($file !== ''): ?><span class="swatch-dot" style="background-image: url('<?= htmlspecialcharsbx($file) ?>')" aria-hidden="true"></span><?php endif ?>
       <?= htmlspecialcharsbx(htmlspecialchars_decode((string)$value['VALUE'])) ?>
       <?php if (isset($value['ELEMENT_COUNT'])): ?><span class="check__count"><?= (int)$value['ELEMENT_COUNT'] ?></span><?php endif ?>
     </label>
     <?php endforeach ?>
+    <?php if ($folded): ?><button class="more-btn" type="button" data-more-toggle>Показать ещё <?= count($item['VALUES']) - $visibleLimit ?></button><?php endif ?>
   </fieldset>
   <?php endif ?>
   <?php endforeach ?>

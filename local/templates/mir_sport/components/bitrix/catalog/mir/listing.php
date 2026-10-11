@@ -82,7 +82,9 @@ $keepParams = static function (array $override) use ($request): string {
   <div class="toolbar">
     <div class="toolbar__group toolbar__group--quick">
       <button class="pill pill--keep filters-toggle" type="button" aria-expanded="false" aria-controls="filters" data-filters-toggle><svg class="icon icon--sm"><use href="#i-filter"/></svg>Фильтры</button>
+      <?php if (($arParams['HIDE_NOT_AVAILABLE'] ?? 'N') !== 'Y'): // with only available products shown the pill would do nothing ?>
       <a class="pill pill--keep" role="button" href="<?= htmlspecialcharsbx($sectionUrl . $keepParams(['stock' => $inStock ? null : 'Y'])) ?>" aria-pressed="<?= $inStock ? 'true' : 'false' ?>">В наличии</a>
+      <?php endif ?>
     </div>
     <form class="sort" method="get" action="<?= htmlspecialcharsbx($sectionUrl) ?>" data-sort-form>
       <?php foreach ($request->getQueryList()->toArray() as $k => $v):

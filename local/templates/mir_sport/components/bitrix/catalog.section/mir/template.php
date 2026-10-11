@@ -19,9 +19,9 @@ $wrapGrid = ($arParams['MIR_WRAP_GRID'] ?? 'Y') !== 'N';
 <p class="muted">Других товаров в этом разделе пока нет.</p>
 <?php elseif ($isEmpty): ?>
 <div class="empty">
-  <span class="empty__title">Ничего не нашлось</span>
-  <span class="muted">Уберите часть фильтров или выберите другой раздел.</span>
-  <a class="btn btn--sm" href="<?= htmlspecialcharsbx($arParams['MIR_RESET_URL'] ?? SITE_DIR . 'catalog/') ?>">Сбросить фильтры</a>
+  <span class="empty__title"><?= htmlspecialcharsbx($arParams['MIR_EMPTY_TITLE'] ?? 'Ничего не нашлось') ?></span>
+  <span class="muted"><?= htmlspecialcharsbx($arParams['MIR_EMPTY_TEXT'] ?? 'Уберите часть фильтров или выберите другой раздел.') ?></span>
+  <a class="btn btn--sm" href="<?= htmlspecialcharsbx($arParams['MIR_RESET_URL'] ?? SITE_DIR . 'catalog/') ?>"><?= htmlspecialcharsbx($arParams['MIR_EMPTY_BUTTON'] ?? 'Сбросить фильтры') ?></a>
 </div>
 <?php else: ?>
 <?php if ($wrapGrid): ?><div class="product-grid"><?php endif ?>

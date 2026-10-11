@@ -38,6 +38,33 @@ if (is_file(__DIR__ . '/fill-sizes-from-names.php')) {
     $store = require $_SERVER['DOCUMENT_ROOT'] . '/local/config/store.php';
 }
 
+// Readable color values and name everywhere (product page, filter, basket, order, e-mails):
+// "Цвет поставщика: цв.синий" -> "Цвет: синий". 1C writes them like that on every import, so this runs each time.
+if ($offersId > 0) {
+    global $DB;
+    foreach ($store['color_props'] as $code) {
+        $row = $DB->Query("select ID, NAME, PROPERTY_TYPE from b_iblock_property where IBLOCK_ID=" . (int)$offersId . " and CODE='" . $DB->ForSql($code) . "'")->Fetch();
+        if (!$row) {
+            continue;
+        }
+        if (preg_match('/^цвет\s+\S+/iu', (string)$row['NAME'])) {
+            (new \CIBlockProperty())->Update((int)$row['ID'], ['NAME' => 'Цвет']);
+        }
+        if ($row['PROPERTY_TYPE'] === 'L') {
+            $fixed = 0;
+            $enums = $DB->Query("select ID, VALUE from b_iblock_property_enum where PROPERTY_ID=" . (int)$row['ID']);
+            while ($e = $enums->Fetch()) {
+                $clean = trim((string)preg_replace('/^цв\.?\s*/iu', '', (string)$e['VALUE']));
+                if ($clean !== '' && $clean !== $e['VALUE']) {
+                    \CIBlockPropertyEnum::Update((int)$e['ID'], ['VALUE' => $clean]);
+                    $fixed++;
+                }
+            }
+            echo "  color $code: name 'Цвет', cleaned values: $fixed\n";
+        }
+    }
+}
+
 $feature = static fn(string $module, string $id): array => ['MODULE_ID' => $module, 'FEATURE_ID' => $id, 'IS_ENABLED' => 'Y'];
 $detail = $feature('iblock', PropertyFeature::FEATURE_ID_DETAIL_PAGE_SHOW);
 $list = $feature('iblock', PropertyFeature::FEATURE_ID_LIST_PAGE_SHOW);
