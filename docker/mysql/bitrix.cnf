@@ -4,9 +4,17 @@ collation-server = utf8mb4_unicode_ci
 sql_mode =
 transaction-isolation = READ-COMMITTED
 innodb_flush_log_at_trx_commit = 2
-innodb_buffer_pool_size = 512M
+innodb_buffer_pool_size = 2G
+innodb_redo_log_capacity = 1G
+innodb_io_capacity = 1000
+tmp_table_size = 64M
+max_heap_table_size = 64M
 innodb_strict_mode = OFF
 max_allowed_packet = 64M
+
+# No replication here, backups are mysqldump dumps. With the binary log on and sync_binlog=1 every commit waits for a
+# disk flush (WSL2 virtual disk): a 1C import ran about 30 times slower (6000 commits: 16 s, without the sync: 0.5 s).
+skip-log-bin
 
 # Match PHP Europe/Moscow; CommerceML rejects database/web clock drift.
 default-time-zone = "+03:00"

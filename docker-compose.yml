@@ -19,6 +19,7 @@ x-site-mounts: &site-mounts
 services:
   nginx:
     image: nginx:1.27-alpine
+    restart: unless-stopped
     ports:
       - "${HTTP_PORT:-8080}:80"
     volumes: *site-mounts
@@ -27,6 +28,7 @@ services:
 
   php:
     build: ./docker/php
+    restart: unless-stopped
     volumes: *site-mounts
     depends_on:
       db:
@@ -34,6 +36,7 @@ services:
 
   db:
     build: ./docker/mysql
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_DATABASE: ${DB_NAME}

@@ -19,8 +19,10 @@ Remove-Variable token
 Unregister-ScheduledTask -TaskName "MirSportTunnel" -Confirm:$false -ErrorAction SilentlyContinue
 Stop-ScheduledTask -TaskName "MirSportTuna" -ErrorAction SilentlyContinue
 Get-Process tuna -ErrorAction SilentlyContinue | Stop-Process -Force
-$action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c `"`"$dir\tuna.exe`" http 8080 --location=$loc --subdomain=$sub --inspect=false > `"$log`" 2>&1`"" -WorkingDirectory $dir
+# Endless retry: tuna exits when DNS is not ready right after boot.
+$action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c `"for /l %i in (0,0,1) do (`"$dir\tuna.exe`" http 8080 --location=$loc --subdomain=$sub --inspect=false >> `"$log`" 2>&1 & timeout /t 15 /nobreak >nul)`"" -WorkingDirectory $dir
 $trigger = New-ScheduledTaskTrigger -AtStartup
+$trigger.Delay = "PT1M"
 $principal = New-ScheduledTaskPrincipal -UserId "maxim" -LogonType S4U
 $settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit ([TimeSpan]::Zero) -RestartCount 999 -RestartInterval (New-TimeSpan -Minutes 1) -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
 Register-ScheduledTask -TaskName "MirSportTuna" -Action $action -Trigger $trigger -Principal $principal -Settings $settings -Force | Out-Null
