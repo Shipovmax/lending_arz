@@ -103,23 +103,6 @@ $keepParams = static function (array $override) use ($request): string {
   <div class="catalog-layout">
     <aside class="filters" id="filters" aria-label="Фильтры" data-filters>
       <?php
-      $APPLICATION->IncludeComponent('bitrix:catalog.section.list', 'mir', [
-          'IBLOCK_TYPE' => $arParams['IBLOCK_TYPE'],
-          'IBLOCK_ID' => $arParams['IBLOCK_ID'],
-          'SECTION_ID' => '',
-          'SECTION_CODE' => '',
-          'TOP_DEPTH' => '1',
-          'COUNT_ELEMENTS' => 'Y',
-          'COUNT_ELEMENTS_FILTER' => 'CNT_ACTIVE',
-          'SECTION_URL' => $arResult['FOLDER'] . $arResult['URL_TEMPLATES']['section'],
-          'ADD_SECTIONS_CHAIN' => 'N',
-          'CACHE_TYPE' => $arParams['CACHE_TYPE'],
-          'CACHE_TIME' => $arParams['CACHE_TIME'],
-          'CACHE_GROUPS' => $arParams['CACHE_GROUPS'],
-          'MIR_CURRENT_CODE' => $sectionCode,
-          'MIR_ALL_URL' => $arResult['FOLDER'],
-      ], $component, ['HIDE_ICONS' => 'Y']);
-
       $APPLICATION->IncludeComponent('bitrix:catalog.smart.filter', 'mir', [
           'IBLOCK_TYPE' => $arParams['IBLOCK_TYPE'],
           'IBLOCK_ID' => $arParams['IBLOCK_ID'],

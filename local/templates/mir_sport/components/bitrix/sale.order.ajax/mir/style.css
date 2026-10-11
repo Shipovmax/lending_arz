@@ -173,3 +173,7 @@
 
 .bx-soa-item-title a { display: inline-flex; align-items: center; min-height: var(--tap); }
 .bx-soa-wrapper .main-user-consent-request a { display: inline-flex; align-items: center; min-height: var(--tap); }
+
+/* The save block sits at the end of the form (right under the last field), not in the summary sidebar. */
+.checkout__main #bx-soa-orderSave { display: flex; flex-direction: column; gap: 16px; margin-top: 8px; padding-top: 24px; border-top: 1px solid var(--c-line); }
+.checkout__main #bx-soa-orderSave .btn { min-height: 54px; }

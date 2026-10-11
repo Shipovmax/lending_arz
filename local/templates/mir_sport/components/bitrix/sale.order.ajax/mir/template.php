@@ -492,50 +492,49 @@ else
 						<div class="bx-soa-section-content reg"></div>
 					</div>
 				</div>
+					<!--	ORDER SAVE BLOCK: at the end of the form, right under the last field	-->
+					<div id="bx-soa-orderSave">
+						<div class="checkbox">
+							<?php
+							if ($arParams['USER_CONSENT'] === 'Y')
+							{
+								if (isset($arParams['USER_CONSENTS']))
+								{
+									foreach ($arParams['USER_CONSENTS'] as $userConsent)
+									{
+										echo '<div>';
+										$APPLICATION->IncludeComponent(
+											'bitrix:main.userconsent.request',
+											'mir',
+											[
+												'ID' => $userConsent['ID'],
+												'IS_CHECKED' => 'N',
+												'REQUIRED' => $userConsent['REQUIRED'],
+												'IS_LOADED' => $arParams['USER_CONSENT_IS_LOADED'],
+												'AUTO_SAVE' => 'N',
+												'SUBMIT_EVENT_NAME' => 'bx-soa-order-save-' . $userConsent['ID'],
+												'REPLACE' => [
+													'button_caption' => $arParams['~MESS_ORDER'] ?? $arParams['MESS_ORDER'],
+													'fields' => $arResult['USER_CONSENT_PROPERTY_DATA']
+												]
+											]
+										);
+										echo '</div>';
+									}
+								}
+							}
+							?>
+						</div>
+						<a href="javascript:void(0)" class="btn btn--accent btn--block" role="button" data-save-button="true">
+							<?=$arParams['MESS_ORDER']?>
+						</a>
+					</div>
 			</div>
 
 			<!--	SIDEBAR BLOCK	-->
 			<div id="bx-soa-total" class="bx-soa-sidebar">
 				<div class="bx-soa-cart-total-ghost"></div>
 				<div class="bx-soa-cart-total"></div>
-				<!--	ORDER SAVE BLOCK: in the sidebar, as in the prototype's .summary	-->
-				<div id="bx-soa-orderSave">
-					<div class="checkbox">
-						<?php
-						if ($arParams['USER_CONSENT'] === 'Y')
-						{
-							if (isset($arParams['USER_CONSENTS']))
-							{
-								foreach ($arParams['USER_CONSENTS'] as $userConsent)
-								{
-									echo '<div>';
-									$APPLICATION->IncludeComponent(
-										'bitrix:main.userconsent.request',
-										'mir',
-										[
-											'ID' => $userConsent['ID'],
-											'IS_CHECKED' => 'N',
-											'REQUIRED' => $userConsent['REQUIRED'],
-											'IS_LOADED' => $arParams['USER_CONSENT_IS_LOADED'],
-											'AUTO_SAVE' => 'N',
-											'SUBMIT_EVENT_NAME' => 'bx-soa-order-save-' . $userConsent['ID'],
-											'REPLACE' => [
-												'button_caption' => $arParams['~MESS_ORDER'] ?? $arParams['MESS_ORDER'],
-												'fields' => $arResult['USER_CONSENT_PROPERTY_DATA']
-											]
-										]
-									);
-									echo '</div>';
-								}
-							}
-						}
-						?>
-					</div>
-					<a href="javascript:void(0)" class="btn btn--accent btn--block" role="button" data-save-button="true">
-						<?=$arParams['MESS_ORDER']?>
-					</a>
-				</div>
-
 			</div>
 		</div>
 	</form>
