@@ -56,6 +56,11 @@ try {
         '1C_TRANSLIT_REPLACE_CHAR' => '-',
         '1C_DISABLE_CHANGE_PRICE_NAME' => 'Y',
         '1C_IBLOCK_CACHE_MODE' => CIBlockCMLImport::IBLOCK_CACHE_FINAL,
+        // Keep 1C photos at full size: by default Bitrix shrinks the detail picture to 300x300 and the preview to 100x100.
+        '1C_DETAIL_RESIZE' => 'N',
+        '1C_GENERATE_PREVIEW' => 'Y',
+        '1C_PREVIEW_WIDTH' => '600',
+        '1C_PREVIEW_HEIGHT' => '600',
     ];
     // Validate credentials before creating a group or changing any settings.
     $password = (string)($input['password'] ?? '');
