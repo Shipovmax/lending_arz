@@ -42,6 +42,38 @@ $smart = static function (int $propertyId, bool $on): void {
 };
 $ib = new \CIBlock();
 
+// New offer properties from 1C named "Размер..." or "Цвет..." (new product groups: clothes, shoes, ...) join the
+// size/color lists automatically, so their products get offer selection and the filter without code changes.
+if ($offersId > 0) {
+    $sizes = $store['size_props'];
+    $colors = $store['color_props'];
+    $rows = PropertyTable::getList([
+        'select' => ['ID', 'CODE', 'NAME'],
+        'filter' => ['=IBLOCK_ID' => $offersId, '=ACTIVE' => 'Y', '!=CODE' => false],
+    ]);
+    while ($p = $rows->fetch()) {
+        $code = (string)$p['CODE'];
+        if ($code === '' || str_starts_with($code, 'CML2_') || in_array($code, $sizes, true) || in_array($code, $colors, true)) {
+            continue;
+        }
+        if (preg_match('/^размер/iu', (string)$p['NAME'])) {
+            $sizes[] = $code;
+            echo "  new size property: $code ({$p['NAME']})\n";
+        } elseif (preg_match('/^цвет/iu', (string)$p['NAME'])) {
+            $colors[] = $code;
+            echo "  new color property: $code ({$p['NAME']})\n";
+        }
+    }
+    if ($sizes !== $store['size_props']) {
+        \Bitrix\Main\Config\Option::set('main', 'mir_sport_size_props', implode(',', $sizes));
+    }
+    if ($colors !== $store['color_props']) {
+        \Bitrix\Main\Config\Option::set('main', 'mir_sport_color_props', implode(',', $colors));
+    }
+    $store['size_props'] = $sizes;
+    $store['color_props'] = $colors;
+}
+
 foreach (array_filter([$productsId, $offersId]) as $iblockId) {
     $ib->Update($iblockId, ['SECTION_PROPERTY' => 'Y', 'PROPERTY_INDEX' => 'Y']);
     $rows = PropertyTable::getList([
