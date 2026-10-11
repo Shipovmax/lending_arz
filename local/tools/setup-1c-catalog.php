@@ -32,6 +32,12 @@ $sku = \CCatalogSku::GetInfoByProductIBlock($productsId);
 $offersId = $sku ? (int)$sku['IBLOCK_ID'] : 0;
 echo "products iblock $productsId, offers iblock $offersId\n";
 
+// Offers whose size is only in the name get a real "Размер" property first (see the script for the rules).
+if (is_file(__DIR__ . '/fill-sizes-from-names.php')) {
+    passthru(PHP_BINARY . ' ' . escapeshellarg(__DIR__ . '/fill-sizes-from-names.php'));
+    $store = require $_SERVER['DOCUMENT_ROOT'] . '/local/config/store.php';
+}
+
 $feature = static fn(string $module, string $id): array => ['MODULE_ID' => $module, 'FEATURE_ID' => $id, 'IS_ENABLED' => 'Y'];
 $detail = $feature('iblock', PropertyFeature::FEATURE_ID_DETAIL_PAGE_SHOW);
 $list = $feature('iblock', PropertyFeature::FEATURE_ID_LIST_PAGE_SHOW);
