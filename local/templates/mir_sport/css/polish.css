@@ -6,6 +6,7 @@
    -------------------------------------------------------------------------- */
 .photo img { box-sizing: border-box; padding: var(--photo-inset); mix-blend-mode: multiply; transition: transform var(--t-slow); }
 .gallery__main.photo img { padding: calc(var(--photo-inset) / 2); }
+/* Small source photos are enlarged at most twice (script.js sets the limit from the real size) */
 .gallery__thumb.photo img, .cart-item__photo.photo img { padding: calc(var(--photo-inset) * 0.75); }
 .bx-soa-item-imgcontainer { background-blend-mode: multiply; }
 

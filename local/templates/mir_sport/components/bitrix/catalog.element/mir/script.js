@@ -53,6 +53,16 @@
       nav.hidden = photos.length < 2;
       showPhoto(0);
     }
+    // 1C sends small photos (about 300 px): enlarge them at most twice, a bigger stretch only blurs them.
+    function limitPhoto() {
+      if (!mainImg || !mainImg.naturalWidth) return;
+      mainImg.style.maxWidth = (mainImg.naturalWidth * 2) + 'px';
+      mainImg.style.maxHeight = (mainImg.naturalHeight * 2) + 'px';
+    }
+    if (mainImg) {
+      mainImg.addEventListener('load', limitPhoto);
+      if (mainImg.complete) limitPhoto();
+    }
     readGallery();
     if (data.gallery && data.gallery.length) {
       photos = data.gallery.map(function (p) { return { thumb: p.thumb, main: p.main }; });
