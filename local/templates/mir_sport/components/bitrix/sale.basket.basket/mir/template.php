@@ -40,6 +40,7 @@ Main\UI\Extension::load(['ui.mustache']);
 $this->addExternalJs($templateFolder . '/js/action-pool.js');
 $this->addExternalJs($templateFolder . '/js/filter.js');
 $this->addExternalJs($templateFolder . '/js/component.js');
+$this->addExternalJs($templateFolder . '/js/qty-input.js');
 
 $mobileColumns = array_fill_keys($arParams['COLUMNS_LIST_MOBILE'] ?? $arParams['COLUMNS_LIST'], true);
 
