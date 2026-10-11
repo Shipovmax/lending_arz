@@ -131,6 +131,10 @@
   .breadcrumbs li:nth-last-child(2)::after { content: none; }
 }
 
+/* Quantity next to the buy button */
+.buy-row .qty { flex: none; height: 56px; }
+@media (max-width: 767px) { .buy-row { flex-wrap: wrap; } .buy-row .qty { order: -1; } .buy-row .btn--primary { flex: 1 1 60%; } }
+
 /* A color without a photo is shown as a text button instead of an empty square */
 .swatch--text { width: auto; min-width: var(--control-h); min-height: var(--control-h); aspect-ratio: auto; padding: 0 var(--sp-3); font-size: var(--fs-14); }
 .swatch--text span { display: flex; align-items: center; justify-content: center; height: 100%; border: none; white-space: nowrap; }

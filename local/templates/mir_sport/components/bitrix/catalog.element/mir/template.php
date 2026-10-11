@@ -94,6 +94,11 @@ $jsData = [
 
     <?php if ($mir['CAN_BUY']): ?>
     <div class="buy-row">
+      <div class="qty" role="group" aria-label="Количество" data-qty>
+        <button type="button" aria-label="Меньше" data-qty-minus>−</button>
+        <output aria-live="polite" data-qty-value>1</output>
+        <button type="button" aria-label="Больше" data-qty-plus>+</button>
+      </div>
       <button class="btn btn--primary" type="button" data-add-to-cart>Добавить в корзину</button>
       <button class="fav-btn" type="button" aria-pressed="false" aria-label="Добавить в избранное" data-fav><svg class="icon"><use href="#i-heart"/></svg></button>
     </div>

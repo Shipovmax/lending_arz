@@ -50,7 +50,7 @@ $elementId = $APPLICATION->IncludeComponent('bitrix:catalog.element', 'mir', [
     'MESSAGE_404' => $arParams['~MESSAGE_404'] ?? '',
     'PRICE_CODE' => $arParams['~PRICE_CODE'],
     'PRICE_VAT_INCLUDE' => $arParams['PRICE_VAT_INCLUDE'],
-    'USE_PRODUCT_QUANTITY' => 'N',
+    'USE_PRODUCT_QUANTITY' => 'Y', // the buy button on the page sends quantity=N
     'OFFERS_CART_PROPERTIES' => $arParams['OFFERS_CART_PROPERTIES'] ?? [],
     'OFFERS_FIELD_CODE' => array_merge($arParams['DETAIL_OFFERS_FIELD_CODE'] ?? [], ['PREVIEW_PICTURE', 'DETAIL_PICTURE']),
     'OFFERS_PROPERTY_CODE' => $arParams['DETAIL_OFFERS_PROPERTY_CODE'] ?? [],

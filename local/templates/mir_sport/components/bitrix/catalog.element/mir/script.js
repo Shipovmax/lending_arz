@@ -177,6 +177,18 @@
       if (barPrice && priceEl) barPrice.textContent = priceEl.textContent;
     }
 
+    /* Quantity next to the buy button (1 to 99) */
+    var qty = 1;
+    var qtyValue = $('[data-qty-value]');
+    function setQty(n) {
+      qty = Math.max(1, Math.min(99, n));
+      if (qtyValue) qtyValue.textContent = String(qty);
+    }
+    var qtyMinus = $('[data-qty-minus]');
+    var qtyPlus = $('[data-qty-plus]');
+    if (qtyMinus) qtyMinus.addEventListener('click', function () { setQty(qty - 1); });
+    if (qtyPlus) qtyPlus.addEventListener('click', function () { setQty(qty + 1); });
+
     /* Add to cart */
     var addBtn = $('[data-add-to-cart]');
     var added = $('[data-added]');
@@ -196,13 +208,13 @@
         }
         addBtn.disabled = true;
         addError.hidden = true;
-        var url = data.actionUrl + (data.actionUrl.indexOf('?') < 0 ? '?' : '&') + 'action=ADD2BASKET&ajax_basket=Y&id=' + encodeURIComponent(id);
+        var url = data.actionUrl + (data.actionUrl.indexOf('?') < 0 ? '?' : '&') + 'action=ADD2BASKET&ajax_basket=Y&quantity=' + qty + '&id=' + encodeURIComponent(id);
         fetch(url, { credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
           .then(function (r) { return r.json(); })
           .then(function (res) {
             if (!res || res.STATUS !== 'OK') throw new Error('add failed');
             var sizeLabel = $('[data-added-size]');
-            if (sizeLabel) sizeLabel.textContent = state.size ? ': размер ' + state.size : '';
+            if (sizeLabel) sizeLabel.textContent = (qty > 1 ? ', ' + qty + ' шт.' : '') + (state.size ? ': размер ' + state.size : '');
             added.hidden = false;
             if (window.BX && BX.onCustomEvent) BX.onCustomEvent('OnBasketChange');
           })
