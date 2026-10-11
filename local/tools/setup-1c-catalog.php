@@ -65,6 +65,11 @@ if ($offersId > 0) {
     }
 }
 
+// Product type (first word of the name) for the filter in mixed groups.
+if (is_file(__DIR__ . '/fill-product-types.php')) {
+    passthru(PHP_BINARY . ' ' . escapeshellarg(__DIR__ . '/fill-product-types.php'));
+}
+
 $feature = static fn(string $module, string $id): array => ['MODULE_ID' => $module, 'FEATURE_ID' => $id, 'IS_ENABLED' => 'Y'];
 $detail = $feature('iblock', PropertyFeature::FEATURE_ID_DETAIL_PAGE_SHOW);
 $list = $feature('iblock', PropertyFeature::FEATURE_ID_LIST_PAGE_SHOW);
@@ -144,6 +149,9 @@ foreach (array_filter([$productsId, $offersId]) as $iblockId) {
             }
         } else {
             $inFilter = $isList && !in_array($code, ['STRANA_PROIZVODSTVA', 'MATERIAL'], true);
+            if ($code === 'TIP_TOVARA') {
+                $features = []; // a filter helper, not a characteristic
+            }
         }
         PropertyFeature::updateFeatures((int)$p['ID'], $features);
         if ($code !== 'MORE_PHOTO') {

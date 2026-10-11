@@ -100,11 +100,56 @@
       });
     }
 
-    /* Search field. Suggestions are filled into [data-suggest] by bitrix:search.title once it is connected. */
+    /* Search field with live suggestions from /search/suggest.php (products in stock, best matches first). */
+    var suggestTimer = null;
+    var suggestReq = null;
+    function esc(t) { return String(t).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+    function renderSuggest(data, q) {
+      if (!suggest) return;
+      if (!data.items.length) {
+        suggest.innerHTML = '<p class="suggest__empty muted">По запросу «' + esc(q) + '» ничего нет в наличии.</p>';
+      } else {
+        suggest.innerHTML = '<div class="suggest__list" role="listbox" aria-label="Подсказки">' + data.items.map(function (i) {
+          return '<a class="suggest__row" role="option" href="' + esc(i.url) + '">' +
+            '<span class="suggest__thumb">' + (i.photo ? '<img src="' + esc(i.photo) + '" alt="">' : '') + '</span>' +
+            '<span class="suggest__name">' + esc(i.name) + '</span>' +
+            (i.price ? '<span class="suggest__price">' + esc(i.price) + '</span>' : '') + '</a>';
+        }).join('') + '</div>' +
+          '<div class="suggest__footer"><a class="caps link-u" href="/search/?q=' + encodeURIComponent(q) + '">Все результаты' + (data.total > data.items.length ? ' (' + data.total + ')' : '') + '</a></div>';
+      }
+      suggest.hidden = false;
+    }
+    function loadSuggest() {
+      var q = input.value.trim();
+      if (q.length < 2) { if (suggest) { suggest.innerHTML = ''; suggest.hidden = true; } return; }
+      if (suggestReq) suggestReq.abort();
+      suggestReq = typeof AbortController === 'function' ? new AbortController() : null;
+      fetch('/search/suggest.php?q=' + encodeURIComponent(q), suggestReq ? { signal: suggestReq.signal } : {})
+        .then(function (r) { return r.json(); })
+        .then(function (data) { if (input.value.trim() === q) renderSuggest(data, q); })
+        .catch(function () {});
+    }
     if (input) {
       input.addEventListener('focus', function () { closeMega(); closeMobileMenu(); openSearch(); });
-      input.addEventListener('input', function () { clearBtn.hidden = !input.value; });
-      clearBtn.addEventListener('click', function () { input.value = ''; clearBtn.hidden = true; input.focus(); });
+      input.addEventListener('input', function () {
+        clearBtn.hidden = !input.value;
+        clearTimeout(suggestTimer);
+        suggestTimer = setTimeout(loadSuggest, 220);
+      });
+      input.addEventListener('keydown', function (e) {
+        if (!suggest || suggest.hidden) return;
+        var rows = $$('.suggest__row', suggest);
+        if (!rows.length) return;
+        var i = rows.indexOf(document.activeElement);
+        if (e.key === 'ArrowDown') { e.preventDefault(); rows[Math.min(i + 1, rows.length - 1)].focus(); }
+      });
+      if (suggest) suggest.addEventListener('keydown', function (e) {
+        var rows = $$('.suggest__row', suggest);
+        var i = rows.indexOf(document.activeElement);
+        if (e.key === 'ArrowDown') { e.preventDefault(); rows[Math.min(i + 1, rows.length - 1)].focus(); }
+        if (e.key === 'ArrowUp') { e.preventDefault(); if (i <= 0) input.focus(); else rows[i - 1].focus(); }
+      });
+      clearBtn.addEventListener('click', function () { input.value = ''; clearBtn.hidden = true; if (suggest) { suggest.innerHTML = ''; suggest.hidden = true; } input.focus(); });
       $('[data-search-close]', search).addEventListener('click', function () {
         input.value = ''; clearBtn.hidden = true; closeSearch();
       });

@@ -236,3 +236,12 @@
   }
   .tabs__tab { flex: none; }
 }
+
+/* Search suggestions */
+.suggest__list { display: flex; flex-direction: column; }
+.suggest__row { gap: var(--sp-3); text-decoration: none; }
+.suggest__row:hover, .suggest__row:focus-visible { background: var(--c-surface); }
+.suggest__thumb { width: 40px; height: 52px; flex: none; background: var(--c-photo); }
+.suggest__thumb img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
+.suggest__name { flex: 1 1 auto; min-width: 0; font-size: var(--fs-14); line-height: 1.35; overflow-wrap: anywhere; }
+.suggest__empty { margin: 0; padding: var(--sp-3) 0; font-size: var(--fs-14); }

@@ -55,10 +55,13 @@ $homeBrands = \MirSport\brand_links($store['catalog_iblock_id'], $store['brand_p
       <a class="caps link-u" href="<?= SITE_DIR ?>catalog/">Смотреть все</a>
     </div>
     <?php
+    // The home page shows products with a photo only; the full catalog shows everything.
+    $GLOBALS['mirHomeFilter'] = ['!DETAIL_PICTURE' => false];
     $APPLICATION->IncludeComponent(
         'bitrix:catalog.section',
         'mir',
         [
+            'FILTER_NAME' => 'mirHomeFilter',
             'IBLOCK_TYPE' => 'catalog',
             'IBLOCK_ID' => $store['catalog_iblock_id'],
             'SECTION_ID' => '',

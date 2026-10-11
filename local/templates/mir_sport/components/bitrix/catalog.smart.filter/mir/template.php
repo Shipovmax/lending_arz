@@ -34,10 +34,13 @@ $rank = static function (array $item) use ($isSize, $isColor): int {
     if (!empty($item['PRICE'])) {
         return 0;
     }
-    if ($isSize($item)) {
-        return 1;
+    if ($item['CODE'] === 'TIP_TOVARA') {
+        return 1; // product type first: it tells sticks from skates in a mixed group
     }
-    return $isColor($item) ? 2 : 3;
+    if ($isSize($item)) {
+        return 2;
+    }
+    return $isColor($item) ? 3 : 4;
 };
 // One "Размер" block: the sizes come from several properties (1C's own and the one taken from names).
 $mergedSize = null;
