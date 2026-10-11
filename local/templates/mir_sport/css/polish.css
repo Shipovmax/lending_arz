@@ -37,7 +37,7 @@
 /* Purchase terms (moved here from the separate terms block) */
 .hero__facts { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--c-dark-border); }
 .hero__fact { display: flex; align-items: flex-start; gap: var(--sp-4); min-height: var(--tap); padding: var(--sp-4) 0; border-bottom: 1px solid var(--c-dark-border); }
-.hero__fact .icon { color: var(--c-accent); margin-top: 1px; }
+.hero__fact .icon { color: var(--c-accent-on-dark); margin-top: 1px; }
 .hero__fact > span { display: flex; flex-direction: column; gap: 2px; }
 .hero__fact-title { font-size: var(--fs-15); font-weight: 600; }
 .hero__fact-text { font-size: var(--fs-14); line-height: 1.5; color: var(--c-on-dark-muted); }
@@ -205,14 +205,18 @@
 }
 
 @media (max-width: 767px) {
-  .hero__facts { grid-template-columns: 1fr; }
+  .hero__facts { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--sp-3); }
+  .hero__fact { align-items: center; gap: var(--sp-2); height: 100%; }
+  .hero__fact .icon { flex: none; }
+  .hero__fact-title { font-size: var(--fs-14); }
+  .hero__fact-text { display: none; }
   .section { gap: var(--sp-4); }
   .section__title { font-size: var(--fs-22); }
   .hero { min-height: 0; aspect-ratio: auto; padding: var(--sp-6) var(--hero-pad) var(--sp-2); gap: var(--sp-5); }
   .hero__content { gap: var(--sp-4); }
   .hero__title { font-size: min(var(--fs-36), 9.4vw); line-height: 1.04; }
   .hero__fact { padding: var(--sp-3) 0; }
-  .hero__fact:last-child { border-bottom: none; }
+  .hero__facts li:nth-last-child(-n + 2) .hero__fact { border-bottom: none; }
   .hero__lead { font-size: var(--fs-15); }
   .hero__actions { padding-top: var(--sp-1); }
   .gateway { gap: var(--sp-2); }
@@ -235,8 +239,6 @@
   /* Product tabs scroll sideways instead of wrapping one tab onto its own line */
   .tabs__list {
     flex-wrap: nowrap; overflow-x: auto; gap: var(--sp-5); padding-right: var(--sp-7); scrollbar-width: none;
-    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - var(--sp-7)), transparent);
-    mask-image: linear-gradient(to right, #000 calc(100% - var(--sp-7)), transparent);
   }
   .tabs__tab { flex: none; }
 }

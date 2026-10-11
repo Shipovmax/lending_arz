@@ -29,10 +29,10 @@ $homeBrands = \MirSport\brand_links($store['catalog_iblock_id'], $store['brand_p
       </div>
     </div>
     <ul class="hero__facts" aria-label="Условия покупки">
-      <li><a class="hero__fact" href="<?= SITE_DIR ?>info/#delivery"><svg class="icon"><use href="#i-store"/></svg><span><span class="hero__fact-title">Самовывоз</span><span class="hero__fact-text">Из магазина в Арзамасе, бесплатно.</span></span></a></li>
-      <li><a class="hero__fact" href="<?= SITE_DIR ?>info/#delivery"><svg class="icon"><use href="#i-truck"/></svg><span><span class="hero__fact-title">Доставка СДЭК</span><span class="hero__fact-text">В пункт выдачи или курьером по России.</span></span></a></li>
-      <li><a class="hero__fact" href="<?= SITE_DIR ?>info/#payment"><svg class="icon"><use href="#i-card"/></svg><span><span class="hero__fact-title">Оплата</span><span class="hero__fact-text">Картой и СБП онлайн или при получении.</span></span></a></li>
-      <li><a class="hero__fact" href="<?= SITE_DIR ?>info/#return"><svg class="icon"><use href="#i-return"/></svg><span><span class="hero__fact-title">Возврат и обмен</span><span class="hero__fact-text">По закону о защите прав потребителей.</span></span></a></li>
+      <li><a class="hero__fact" href="<?= SITE_DIR ?>info/#delivery"><svg class="icon" aria-hidden="true"><use href="#i-store"/></svg><span><span class="hero__fact-title">Самовывоз</span><span class="hero__fact-text">Из магазина в Арзамасе, бесплатно.</span></span></a></li>
+      <li><a class="hero__fact" href="<?= SITE_DIR ?>info/#delivery"><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg><span><span class="hero__fact-title">Доставка СДЭК</span><span class="hero__fact-text">В пункт выдачи или курьером по России.</span></span></a></li>
+      <li><a class="hero__fact" href="<?= SITE_DIR ?>info/#payment"><svg class="icon" aria-hidden="true"><use href="#i-card"/></svg><span><span class="hero__fact-title">Оплата</span><span class="hero__fact-text">Картой и СБП онлайн или при получении.</span></span></a></li>
+      <li><a class="hero__fact" href="<?= SITE_DIR ?>info/#return"><svg class="icon" aria-hidden="true"><use href="#i-return"/></svg><span><span class="hero__fact-title">Возврат и обмен</span><span class="hero__fact-text">По закону о защите прав потребителей.</span></span></a></li>
     </ul>
   </section>
 
