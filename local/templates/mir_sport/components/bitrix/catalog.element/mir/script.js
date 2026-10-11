@@ -208,17 +208,34 @@
         }
         addBtn.disabled = true;
         addError.hidden = true;
+        added.hidden = true;
         var url = data.actionUrl + (data.actionUrl.indexOf('?') < 0 ? '?' : '&') + 'action=ADD2BASKET&ajax_basket=Y&quantity=' + qty + '&id=' + encodeURIComponent(id);
-        fetch(url, { credentials: 'same-origin', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-          .then(function (r) { return r.json(); })
+        var headers = { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' };
+        // The free tunnel may return its HTML notice to browser requests instead of the API response.
+        if (/\.tuna\.am$/.test(window.location.hostname)) headers['tuna-skip-browser-warning'] = 'true';
+        var failureMessage = 'Не удалось связаться с сайтом. Попробуйте ещё раз.';
+        fetch(url, { credentials: 'same-origin', headers: headers })
+          .then(function (r) {
+            if (!r.ok) {
+              failureMessage = 'Сайт временно не может добавить товар. Попробуйте позже.';
+              throw new Error('HTTP error');
+            }
+            failureMessage = 'Не удалось получить ответ корзины. Обновите страницу и попробуйте ещё раз.';
+            return r.json();
+          })
           .then(function (res) {
-            if (!res || res.STATUS !== 'OK') throw new Error('add failed');
+            if (!res || res.STATUS !== 'OK') {
+              if (res && typeof res.MESSAGE === 'string' && res.MESSAGE.trim()) {
+                failureMessage = res.MESSAGE.trim();
+              }
+              throw new Error('add failed');
+            }
             var sizeLabel = $('[data-added-size]');
             if (sizeLabel) sizeLabel.textContent = (qty > 1 ? ', ' + qty + ' шт.' : '') + (state.size ? ': размер ' + state.size : '');
             added.hidden = false;
             if (window.BX && BX.onCustomEvent) BX.onCustomEvent('OnBasketChange');
           })
-          .catch(function () { addError.hidden = false; })
+          .catch(function () { addError.textContent = failureMessage; addError.hidden = false; })
           .then(function () { addBtn.disabled = false; });
       });
     }
