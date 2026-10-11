@@ -74,6 +74,14 @@ if ($offersId > 0) {
     $store['color_props'] = $colors;
 }
 
+// URL templates: a 1C import can leave them empty, and then menus and tiles get empty links.
+$ib->Update($productsId, [
+    'LIST_PAGE_URL' => '#SITE_DIR#/catalog/',
+    'SECTION_PAGE_URL' => '#SITE_DIR#/catalog/#SECTION_CODE#/',
+    'DETAIL_PAGE_URL' => '#SITE_DIR#/catalog/#SECTION_CODE#/#ELEMENT_CODE#/',
+]);
+echo "  url templates set for iblock $productsId\n";
+
 foreach (array_filter([$productsId, $offersId]) as $iblockId) {
     $ib->Update($iblockId, ['SECTION_PROPERTY' => 'Y', 'PROPERTY_INDEX' => 'Y']);
     $rows = PropertyTable::getList([
